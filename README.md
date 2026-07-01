@@ -71,7 +71,23 @@ python -m http.server 8080
 
 **`variantType`**: `"base"`, `"branch_1"`, `"branch_2"`, `"branch_3"`
 
-### 3. Задеплоить
+### 3. Обновить версию кэша в index.html
+
+Чтобы браузеры игроков гарантированно скачали обновлённые файлы — **при каждом деплое** обновляй версию в `index.html`:
+
+```html
+<!-- Было -->
+<link rel="stylesheet" href="css/style.css?v=1.2">
+<script src="js/app.js?v=1.2"></script>
+
+<!-- Стало (следующий патч) -->
+<link rel="stylesheet" href="css/style.css?v=1.3">
+<script src="js/app.js?v=1.3"></script>
+```
+
+> Версия должна совпадать с номером патча (v1.3, v2.0 и т.д.).
+
+### 4. Задеплоить
 
 ```bash
 git add data/weapons.json data/changelog.json
