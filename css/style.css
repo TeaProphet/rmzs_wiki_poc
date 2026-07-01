@@ -4,23 +4,23 @@
 
 /* ===== VARIABLES ===== */
 :root {
-  --bg:           #070a12;
-  --bg-2:         #0b0f1c;
-  --bg-card:      #0e1322;
-  --bg-card-hov:  #121828;
-  --bg-3:         #141c30;
-  --bg-input:     #0c1020;
+  --bg:           #060606;
+  --bg-2:         #0f0f0f;
+  --bg-card:      #282828;
+  --bg-card-hov:  #333333;
+  --bg-3:         #161616;
+  --bg-input:     #222222;
 
-  --border:       #1a2540;
-  --border-2:     #243058;
+  --border:       #3a3a3a;
+  --border-2:     #484848;
 
-  --text:         #ccd8f0;
-  --text-2:       #7888a8;
-  --text-3:       #4a5878;
+  --text:         #ffffff;
+  --text-2:       #aaaaaa;
+  --text-3:       #666666;
 
-  --accent:       #f0a010;
-  --accent-dim:   #7a5208;
-  --accent-glow:  rgba(240,160,16,0.15);
+  --accent:       #e11d48;
+  --accent-dim:   #991b1b;
+  --accent-glow:  rgba(225, 29, 72, 0.15);
 
   --buff:         #22c55e;
   --buff-bg:      rgba(34,197,94,0.08);
@@ -37,10 +37,10 @@
   --t5: #ff7a28; --t5-bg: rgba(255,122,40,0.1);
   --t6: #ffd000; --t6-bg: rgba(255,208,0,0.1);
 
-  --r-sm:  4px;
-  --r:     8px;
-  --r-lg:  12px;
-  --r-xl:  16px;
+  --r-sm:  2px;
+  --r:     4px;
+  --r-lg:  6px;
+  --r-xl:  8px;
 
   --shadow-sm: 0 2px 12px rgba(0,0,0,0.4);
   --shadow:    0 6px 28px rgba(0,0,0,0.55);
@@ -607,8 +607,8 @@ body {
 @keyframes patchCardFlash {
   0% {
     border-color: var(--accent);
-    box-shadow: 0 0 20px rgba(240, 160, 16, 0.3);
-    background: rgba(240, 160, 16, 0.1);
+    box-shadow: 0 0 20px rgba(225, 29, 72, 0.3);
+    background: rgba(225, 29, 72, 0.1);
   }
   100% {
     border-color: var(--border);
@@ -786,7 +786,7 @@ body {
 }
 .history-row.is-current {
   border-color: var(--accent-dim);
-  background: rgba(240,160,16,0.04);
+  background: rgba(225, 29, 72, 0.04);
 }
 .history-row.buff-row { border-color: var(--buff-border); background: var(--buff-bg); }
 .history-row.nerf-row { border-color: var(--nerf-border); background: var(--nerf-bg); }
