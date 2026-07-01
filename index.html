@@ -17,12 +17,6 @@
     (function() {
       const v = Date.now();
 
-      // Inject favicon
-      const fav = document.createElement('link');
-      fav.rel = 'icon';
-      fav.type = 'image/webp';
-      fav.href = './rmzs_icon.webp?v=' + v;
-      document.head.appendChild(fav);
 
       // Inject style.css
       const link = document.createElement('link');
