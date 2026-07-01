@@ -1548,7 +1548,7 @@
     "damage": 27,
     "clipSize": 20,
     "delay": 0.17,
-    "tier": null,
+    "tier": 5,
     "reload": null,
     "ammo": "pulse",
     "projectileCount": 1
@@ -1772,7 +1772,7 @@
     "damage": 350,
     "clipSize": 30,
     "delay": 1.15,
-    "tier": null,
+    "tier": 6,
     "reload": 1.1,
     "ammo": "pulse",
     "projectileCount": 1

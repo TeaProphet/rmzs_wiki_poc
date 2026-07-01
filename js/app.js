@@ -450,9 +450,29 @@ function renderWeaponCard(w) {
     const valHtml = val != null
       ? `${val}${s.unit ? `<span class="stat-unit">${s.unit}</span>` : ''}${ci}`
       : `<span class="stat-na">—</span>`;
+      
+    let labelHtml = s.label;
+    if (s.key === 'dps') {
+      labelHtml = `
+        <span class="dps-label-container">
+          ${s.label}
+          <span class="info-tooltip-trigger">
+            <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span class="info-tooltip-content">
+              <span class="tooltip-title">Формула:</span>
+              <span class="formula-fraction">
+                <span class="fraction-numerator">Урон × Снаряды</span>
+                <span class="fraction-denominator">Задержка</span>
+              </span>
+            </span>
+          </span>
+        </span>
+      `;
+    }
+
     return `
       <div class="stat-cell">
-        <div class="stat-label">${s.label}</div>
+        <div class="stat-label">${labelHtml}</div>
         <div class="stat-value" ${attrs}>${valHtml}</div>
       </div>`;
   }).join('');
@@ -471,12 +491,6 @@ function renderWeaponCard(w) {
       </div>
       <div class="card-divider"></div>
       <div class="card-stats">${statsHtml}</div>
-      ${w.projectileCount && w.projectileCount > 1 ? `
-        <div class="card-projectile-count">
-          <span>Кол-во снарядов за выстрел</span>
-          <strong>${w.projectileCount}</strong>
-        </div>
-      ` : ''}
       <div class="card-footer">
         <span class="variants-label">
           ${varCount > 0
@@ -547,7 +561,27 @@ function renderFamilyDetail(family) {
         : '';
       return `<td><div class="table-stat" ${attrs}>${valHtml}</div></td>`;
     }).join('');
-    return `<tr><td><div class="row-label">${s.label}</div></td>${cells}</tr>`;
+
+    let labelHtml = s.label;
+    if (s.key === 'dps') {
+       labelHtml = `
+        <span class="dps-label-container">
+          ${s.label}
+          <span class="info-tooltip-trigger">
+            <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span class="info-tooltip-content">
+              <span class="tooltip-title">Формула:</span>
+              <span class="formula-fraction">
+                <span class="fraction-numerator">Урон × Снаряды</span>
+                <span class="fraction-denominator">Задержка</span>
+              </span>
+            </span>
+          </span>
+        </span>
+      `;
+    }
+
+    return `<tr><td><div class="row-label">${labelHtml}</div></td>${cells}</tr>`;
   }).join('');
 
   // Projectile count row (only if at least one variant has projectileCount > 1)

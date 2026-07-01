@@ -284,10 +284,11 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--r-xl);
-  overflow: hidden;
   cursor: pointer;
   transition: border-color var(--ease), transform var(--ease), box-shadow var(--ease), background var(--ease);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 .family-card::before {
   content: '';
@@ -296,12 +297,15 @@ body {
   height: 2px;
   opacity: 0;
   transition: opacity var(--ease);
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 .family-card:hover {
   background: var(--bg-card-hov);
   border-color: var(--border-2);
   transform: translateY(-3px);
   box-shadow: var(--shadow);
+  z-index: 10;
 }
 .family-card:hover::before { opacity: 1; }
 
@@ -442,6 +446,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: auto;
 }
 .variants-label { font-size: 11px; color: var(--text-3); }
 .variants-label strong { color: var(--text-2); font-weight: 600; }
@@ -454,22 +459,23 @@ body {
 .family-card:hover .card-arrow { color: var(--accent); transform: translateX(3px); }
 
 .card-projectile-count {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-3);
   padding: 0 16px 12px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 3px;
+}
+.card-projectile-count span {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--text-3);
 }
 .card-projectile-count strong {
-  color: var(--accent);
-  background: var(--accent-glow);
-  padding: 1px 6px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--accent-dim);
+  color: var(--text);
   font-family: 'Rajdhani', sans-serif;
-  font-size: 11px;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* ================================================================
@@ -589,6 +595,10 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.8px;
   white-space: nowrap;
+}
+.row-label .info-svg {
+  width: 12px;
+  height: 12px;
 }
 .table-stat {
   font-family: 'Rajdhani', sans-serif;
@@ -905,6 +915,95 @@ a.h-patch-link:active {
 }
 .empty-state h3 { font-size: 16px; color: var(--text-2); font-weight: 600; }
 .empty-state p { font-size: 12px; }
+
+/* Tooltip and Info Icon */
+.dps-label-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.info-tooltip-trigger {
+  cursor: help;
+  user-select: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.info-svg {
+  width: 10px;
+  height: 10px;
+  color: var(--text-3);
+  transition: color var(--ease);
+  display: block;
+}
+.info-tooltip-trigger:hover .info-svg {
+  color: var(--accent);
+}
+.info-tooltip-content {
+  position: absolute;
+  bottom: 140%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--bg-card, #1c1c24);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ease), transform var(--ease);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.info-tooltip-trigger:hover .info-tooltip-content {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-title {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1;
+}
+.formula-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
+}
+.fraction-numerator {
+  padding: 0 2px 2px;
+  border-bottom: 1px solid var(--text-3);
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+}
+.fraction-denominator {
+  padding: 2px 2px 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Align tooltips inside comparison table to start from the icon edge to prevent overflow clipping */
+.row-label .info-tooltip-content {
+  left: 0;
+  transform: translateY(4px);
+}
+.row-label .info-tooltip-trigger:hover .info-tooltip-content {
+  transform: translateY(0);
+}
 
 /* ================================================================
    UTILITY
