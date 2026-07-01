@@ -251,6 +251,13 @@ body {
 /* Ammo chips */
 .chip[data-ammo].active { color: var(--accent); border-color: var(--accent); background: var(--accent-glow); }
 
+/* Sort chips */
+.chip[data-sort].active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
 /* ================================================================
    RESULTS COUNT
    ================================================================ */

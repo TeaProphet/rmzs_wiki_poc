@@ -11,7 +11,7 @@
     "tier": 1,
     "reload": 2.32,
     "ammo": "chemical",
-    "dps": 66
+    "projectileCount": 1
   },
   {
     "family": "Blaster",
@@ -25,7 +25,7 @@
     "tier": 1,
     "reload": 2.02,
     "ammo": "buckshot",
-    "dps": 68
+    "projectileCount": 9
   },
   {
     "family": "Blaster",
@@ -39,7 +39,7 @@
     "tier": 1,
     "reload": 0.45,
     "ammo": "buckshot",
-    "dps": 180
+    "projectileCount": 9
   },
   {
     "family": "Carrion",
@@ -53,7 +53,7 @@
     "tier": 1,
     "reload": 1.67,
     "ammo": "impactmine",
-    "dps": 15
+    "projectileCount": 1
   },
   {
     "family": "Owens",
@@ -67,7 +67,7 @@
     "tier": 1,
     "reload": 2.6,
     "ammo": "pistol",
-    "dps": 119
+    "projectileCount": 2
   },
   {
     "family": "Owens",
@@ -81,7 +81,7 @@
     "tier": 1,
     "reload": null,
     "ammo": "pistol",
-    "dps": 102
+    "projectileCount": 2
   },
   {
     "family": "Owens",
@@ -95,7 +95,7 @@
     "tier": 1,
     "reload": null,
     "ammo": "pistol",
-    "dps": 191
+    "projectileCount": 2
   },
   {
     "family": "Slinger",
@@ -109,7 +109,7 @@
     "tier": 1,
     "reload": 1.72,
     "ammo": "XBowBolt",
-    "dps": 55
+    "projectileCount": 1
   },
   {
     "family": "Z9000",
@@ -123,7 +123,7 @@
     "tier": 1,
     "reload": 1.53,
     "ammo": "pulse",
-    "dps": 68
+    "projectileCount": 1
   },
   {
     "family": "Crackler",
@@ -137,7 +137,7 @@
     "tier": 1,
     "reload": 3.37,
     "ammo": "ar2",
-    "dps": 69
+    "projectileCount": 1
   },
   {
     "family": "Crackler",
@@ -151,7 +151,7 @@
     "tier": 1,
     "reload": 3.37,
     "ammo": "ar2",
-    "dps": 49
+    "projectileCount": 1
   },
   {
     "family": "Crackler",
@@ -165,7 +165,7 @@
     "tier": 1,
     "reload": 0.9,
     "ammo": "ar2",
-    "dps": 192
+    "projectileCount": 1
   },
   {
     "family": "Shredder",
@@ -179,7 +179,7 @@
     "tier": 1,
     "reload": 3.29,
     "ammo": "smg1",
-    "dps": 98
+    "projectileCount": 1
   },
   {
     "family": "Simon",
@@ -193,7 +193,7 @@
     "tier": 1,
     "reload": 5.88,
     "ammo": "pistol",
-    "dps": 152
+    "projectileCount": 1
   },
   {
     "family": "Stubber",
@@ -207,7 +207,7 @@
     "tier": 1,
     "reload": 3,
     "ammo": "357",
-    "dps": 39
+    "projectileCount": 1
   },
   {
     "family": "Bayonet",
@@ -221,7 +221,7 @@
     "tier": 2,
     "reload": 3,
     "ammo": "357",
-    "dps": 133
+    "projectileCount": 1
   },
   {
     "family": "Bayonet",
@@ -235,7 +235,7 @@
     "tier": 2,
     "reload": 3,
     "ammo": "357",
-    "dps": 103
+    "projectileCount": 1
   },
   {
     "family": "Murka",
@@ -249,7 +249,7 @@
     "tier": 2,
     "reload": 2.16,
     "ammo": "buckshot",
-    "dps": 188
+    "projectileCount": 9
   },
   {
     "family": "Murka",
@@ -263,7 +263,7 @@
     "tier": 2,
     "reload": 2.11,
     "ammo": "buckshot",
-    "dps": 73
+    "projectileCount": 7
   },
   {
     "family": "Thumper",
@@ -277,7 +277,7 @@
     "tier": 2,
     "reload": null,
     "ammo": "impactmine",
-    "dps": 79
+    "projectileCount": 1
   },
   {
     "family": "Eraser",
@@ -291,7 +291,7 @@
     "tier": 2,
     "reload": 2.57,
     "ammo": "pistol",
-    "dps": 120
+    "projectileCount": 1
   },
   {
     "family": "Eraser",
@@ -305,7 +305,7 @@
     "tier": 2,
     "reload": null,
     "ammo": "pistol",
-    "dps": 119
+    "projectileCount": 1
   },
   {
     "family": "Eraser",
@@ -319,7 +319,7 @@
     "tier": 2,
     "reload": 1,
     "ammo": "pulse",
-    "dps": 95
+    "projectileCount": 1
   },
   {
     "family": "Amigo",
@@ -333,7 +333,7 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "dps": 120
+    "projectileCount": 1
   },
   {
     "family": "Amigo",
@@ -347,7 +347,7 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "dps": 123
+    "projectileCount": 1
   },
   {
     "family": "Amigo",
@@ -361,7 +361,7 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "dps": 80
+    "projectileCount": 3
   },
   {
     "family": "Splinter",
@@ -375,7 +375,7 @@
     "tier": 2,
     "reload": 2.8,
     "ammo": "buckshot",
-    "dps": 162
+    "projectileCount": 9
   },
   {
     "family": "Ricochete",
@@ -389,7 +389,7 @@
     "tier": 2,
     "reload": 3,
     "ammo": "pistol",
-    "dps": 66
+    "projectileCount": 1
   },
   {
     "family": "Ricochete",
@@ -403,7 +403,7 @@
     "tier": 2,
     "reload": 3,
     "ammo": "pistol",
-    "dps": 60
+    "projectileCount": 1
   },
   {
     "family": "Crossfire",
@@ -417,7 +417,7 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "dps": 160
+    "projectileCount": 3
   },
   {
     "family": "Crossfire",
@@ -431,7 +431,7 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "dps": 99
+    "projectileCount": 2
   },
   {
     "family": "Crossfire",
@@ -445,7 +445,7 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "dps": 350
+    "projectileCount": 3
   },
   {
     "family": "Inquisitor",
@@ -459,7 +459,7 @@
     "tier": 2,
     "reload": 0.6,
     "ammo": "XBowBolt",
-    "dps": 53
+    "projectileCount": 1
   },
   {
     "family": "Inquisitor",
@@ -473,7 +473,7 @@
     "tier": 2,
     "reload": 0.6,
     "ammo": "XBowBolt",
-    "dps": 36
+    "projectileCount": 1
   },
   {
     "family": "Annabelle",
@@ -487,7 +487,7 @@
     "tier": 2,
     "reload": null,
     "ammo": "357",
-    "dps": 72
+    "projectileCount": 1
   },
   {
     "family": "Annabelle",
@@ -501,7 +501,7 @@
     "tier": 2,
     "reload": null,
     "ammo": "357",
-    "dps": 50
+    "projectileCount": 1
   },
   {
     "family": "Nova Blaster",
@@ -515,7 +515,7 @@
     "tier": 2,
     "reload": 3.67,
     "ammo": "pulse",
-    "dps": 80
+    "projectileCount": 1
   },
   {
     "family": "Nova Blaster",
@@ -529,7 +529,7 @@
     "tier": 2,
     "reload": 3.8,
     "ammo": "pulse",
-    "dps": 71
+    "projectileCount": 2
   },
   {
     "family": "Nova Blaster",
@@ -543,7 +543,7 @@
     "tier": 2,
     "reload": 3.67,
     "ammo": "pulse",
-    "dps": 77
+    "projectileCount": 1
   },
   {
     "family": "Sprayer",
@@ -557,7 +557,7 @@
     "tier": 2,
     "reload": 3.17,
     "ammo": "smg1",
-    "dps": 149
+    "projectileCount": 1
   },
   {
     "family": "Sprayer",
@@ -571,7 +571,7 @@
     "tier": 2,
     "reload": 3.17,
     "ammo": "smg1",
-    "dps": 140
+    "projectileCount": 1
   },
   {
     "family": "Charon",
@@ -585,7 +585,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "XBowBolt",
-    "dps": 127
+    "projectileCount": 1
   },
   {
     "family": "Charon",
@@ -599,7 +599,7 @@
     "tier": 3,
     "reload": 0.62,
     "ammo": "XBowBolt",
-    "dps": 210
+    "projectileCount": 1
   },
   {
     "family": "Charon",
@@ -613,7 +613,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "XBowBolt",
-    "dps": 87
+    "projectileCount": 1
   },
   {
     "family": "Oberon",
@@ -627,7 +627,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "pulse",
-    "dps": 94
+    "projectileCount": 5
   },
   {
     "family": "Oberon",
@@ -641,7 +641,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "pulse",
-    "dps": 375
+    "projectileCount": 5
   },
   {
     "family": "Akbar",
@@ -655,7 +655,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "ar2",
-    "dps": 191
+    "projectileCount": 1
   },
   {
     "family": "Hyena",
@@ -669,7 +669,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "impactmine",
-    "dps": 420
+    "projectileCount": 1
   },
   {
     "family": "Rebel",
@@ -683,7 +683,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 142
+    "projectileCount": 9
   },
   {
     "family": "Rebel",
@@ -697,7 +697,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 1066
+    "projectileCount": 9
   },
   {
     "family": "Ender",
@@ -711,7 +711,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 178
+    "projectileCount": 1
   },
   {
     "family": "Ruger",
@@ -725,7 +725,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "ar2",
-    "dps": 167
+    "projectileCount": 1
   },
   {
     "family": "Tempest",
@@ -739,7 +739,7 @@
     "tier": 3,
     "reload": 1.08,
     "ammo": "pistol",
-    "dps": 127
+    "projectileCount": 1
   },
   {
     "family": "Tempest",
@@ -753,7 +753,7 @@
     "tier": 3,
     "reload": 1.08,
     "ammo": "pulse",
-    "dps": 95
+    "projectileCount": 1
   },
   {
     "family": "Tempest",
@@ -767,7 +767,7 @@
     "tier": 3,
     "reload": 1.2,
     "ammo": "pistol",
-    "dps": 117
+    "projectileCount": 1
   },
   {
     "family": "Tosser",
@@ -781,7 +781,7 @@
     "tier": 3,
     "reload": 0.66,
     "ammo": "smg1",
-    "dps": 153
+    "projectileCount": 1
   },
   {
     "family": "Tosser",
@@ -795,7 +795,7 @@
     "tier": 3,
     "reload": 0.66,
     "ammo": "smg1",
-    "dps": 85
+    "projectileCount": 1
   },
   {
     "family": "Tosser",
@@ -809,7 +809,7 @@
     "tier": 3,
     "reload": 0.95,
     "ammo": "smg1",
-    "dps": 95
+    "projectileCount": 1
   },
   {
     "family": "Silencer",
@@ -823,7 +823,7 @@
     "tier": 3,
     "reload": 0.8,
     "ammo": "smg1",
-    "dps": 193
+    "projectileCount": 1
   },
   {
     "family": "Silencer",
@@ -837,7 +837,7 @@
     "tier": 3,
     "reload": 0.723,
     "ammo": "smg1",
-    "dps": 109
+    "projectileCount": 3
   },
   {
     "family": "Zombie Drill",
@@ -851,7 +851,7 @@
     "tier": 3,
     "reload": 1.95,
     "ammo": "pistol",
-    "dps": 130
+    "projectileCount": 1
   },
   {
     "family": "Zombie Drill",
@@ -865,7 +865,7 @@
     "tier": 3,
     "reload": 2.2,
     "ammo": "pulse",
-    "dps": 114
+    "projectileCount": 1
   },
   {
     "family": "Zombie Drill",
@@ -879,7 +879,7 @@
     "tier": 3,
     "reload": 1.95,
     "ammo": "pistol",
-    "dps": 200
+    "projectileCount": 2
   },
   {
     "family": "Pollutor",
@@ -893,7 +893,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "chemical",
-    "dps": 153
+    "projectileCount": 1
   },
   {
     "family": "Hunter",
@@ -907,7 +907,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "357",
-    "dps": 61
+    "projectileCount": 1
   },
   {
     "family": "Heckler",
@@ -921,7 +921,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "impactmine",
-    "dps": 80
+    "projectileCount": 1
   },
   {
     "family": "Onyx",
@@ -935,7 +935,7 @@
     "tier": 3,
     "reload": null,
     "ammo": "357",
-    "dps": 115
+    "projectileCount": 1
   },
   {
     "family": "Quasar",
@@ -949,7 +949,7 @@
     "tier": 4,
     "reload": 1.05,
     "ammo": "pulse",
-    "dps": 89
+    "projectileCount": 1
   },
   {
     "family": "Quasar",
@@ -963,7 +963,7 @@
     "tier": 4,
     "reload": 1.05,
     "ammo": "pulse",
-    "dps": 109
+    "projectileCount": 3
   },
   {
     "family": "Sweeper",
@@ -977,7 +977,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 150
+    "projectileCount": 9
   },
   {
     "family": "Sweeper",
@@ -991,7 +991,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 249
+    "projectileCount": 9
   },
   {
     "family": "Headhunter",
@@ -1005,7 +1005,7 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pistol",
-    "dps": 177
+    "projectileCount": 1
   },
   {
     "family": "Headhunter",
@@ -1019,7 +1019,7 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pistol",
-    "dps": 142
+    "projectileCount": 1
   },
   {
     "family": "Headhunter",
@@ -1033,7 +1033,7 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pulse",
-    "dps": 168
+    "projectileCount": 1
   },
   {
     "family": "Quicksilver",
@@ -1047,7 +1047,7 @@
     "tier": 4,
     "reload": 1.2,
     "ammo": "357",
-    "dps": 171
+    "projectileCount": 1
   },
   {
     "family": "Quicksilver",
@@ -1061,7 +1061,7 @@
     "tier": 4,
     "reload": 1.2,
     "ammo": "357",
-    "dps": 224
+    "projectileCount": 6
   },
   {
     "family": "Corrode",
@@ -1075,7 +1075,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "chemical",
-    "dps": 157
+    "projectileCount": 1
   },
   {
     "family": "Shtormbreaker",
@@ -1089,7 +1089,7 @@
     "tier": 4,
     "reload": 0.92,
     "ammo": "buckshot",
-    "dps": 173
+    "projectileCount": 6
   },
   {
     "family": "Artemis",
@@ -1103,7 +1103,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "XBowBolt",
-    "dps": 90
+    "projectileCount": 1
   },
   {
     "family": "Artemis",
@@ -1117,7 +1117,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "XBowBolt",
-    "dps": 95
+    "projectileCount": 1
   },
   {
     "family": "Barrage",
@@ -1131,7 +1131,7 @@
     "tier": 4,
     "reload": 0.8,
     "ammo": "impactmine",
-    "dps": 80
+    "projectileCount": 1
   },
   {
     "family": "Reaper",
@@ -1145,7 +1145,7 @@
     "tier": 4,
     "reload": 1.15,
     "ammo": "smg1",
-    "dps": 132
+    "projectileCount": 1
   },
   {
     "family": "Stalker",
@@ -1159,7 +1159,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "dps": 209
+    "projectileCount": 1
   },
   {
     "family": "Stalker",
@@ -1173,7 +1173,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "dps": 117
+    "projectileCount": 3
   },
   {
     "family": "Tiny",
@@ -1187,7 +1187,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "357",
-    "dps": 466
+    "projectileCount": 1
   },
   {
     "family": "Tiny",
@@ -1201,7 +1201,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "357",
-    "dps": 175
+    "projectileCount": 1
   },
   {
     "family": "Long Arm",
@@ -1215,7 +1215,7 @@
     "tier": 4,
     "reload": 0.85,
     "ammo": "pistol",
-    "dps": 205
+    "projectileCount": 1
   },
   {
     "family": "Long Arm",
@@ -1229,7 +1229,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "pistol",
-    "dps": 236
+    "projectileCount": 1
   },
   {
     "family": "Inferno",
@@ -1243,7 +1243,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "dps": 200
+    "projectileCount": 1
   },
   {
     "family": "Bullet Storm",
@@ -1257,7 +1257,7 @@
     "tier": 4,
     "reload": null,
     "ammo": "smg1",
-    "dps": 167
+    "projectileCount": 1
   },
   {
     "family": "Bullet Storm",
@@ -1271,7 +1271,7 @@
     "tier": 4,
     "reload": 0.94,
     "ammo": "smg1",
-    "dps": 225
+    "projectileCount": 1
   },
   {
     "family": "Bizon",
@@ -1285,7 +1285,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "smg1",
-    "dps": 178
+    "projectileCount": 1
   },
   {
     "family": "Bizon",
@@ -1299,7 +1299,7 @@
     "tier": 5,
     "reload": 1.2,
     "ammo": "smg1",
-    "dps": 228
+    "projectileCount": 1
   },
   {
     "family": "Renegade",
@@ -1313,7 +1313,7 @@
     "tier": 5,
     "reload": 1.08,
     "ammo": "357",
-    "dps": 115
+    "projectileCount": 1
   },
   {
     "family": "Renegade",
@@ -1327,7 +1327,7 @@
     "tier": 5,
     "reload": 1.15,
     "ammo": "357",
-    "dps": 270
+    "projectileCount": 1
   },
   {
     "family": "Malorian Arms 3516",
@@ -1341,7 +1341,7 @@
     "tier": 5,
     "reload": 0.78,
     "ammo": "pistol",
-    "dps": 230
+    "projectileCount": 1
   },
   {
     "family": "IMk Plasma Projector",
@@ -1355,7 +1355,7 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "dps": 131
+    "projectileCount": 1
   },
   {
     "family": "IMk Plasma Projector",
@@ -1369,7 +1369,7 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "dps": 119
+    "projectileCount": 5
   },
   {
     "family": "IMk Plasma Projector",
@@ -1383,7 +1383,7 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "dps": 98
+    "projectileCount": 1
   },
   {
     "family": "Broadside",
@@ -1397,7 +1397,7 @@
     "tier": 5,
     "reload": 0.74,
     "ammo": "impactmine",
-    "dps": 104
+    "projectileCount": 1
   },
   {
     "family": "Scattershot",
@@ -1411,7 +1411,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 195
+    "projectileCount": 9
   },
   {
     "family": "Scattershot",
@@ -1425,7 +1425,7 @@
     "tier": 5,
     "reload": "1.25X",
     "ammo": "buckshot",
-    "dps": 1393
+    "projectileCount": 9
   },
   {
     "family": "Blitzo",
@@ -1439,7 +1439,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "ar2",
-    "dps": 202
+    "projectileCount": 1
   },
   {
     "family": "Smelter",
@@ -1453,7 +1453,7 @@
     "tier": 5,
     "reload": 0.45,
     "ammo": "scrap",
-    "dps": 140
+    "projectileCount": 7
   },
   {
     "family": "Smelter",
@@ -1467,7 +1467,7 @@
     "tier": 5,
     "reload": 0.64,
     "ammo": "XBowBolt",
-    "dps": 1102
+    "projectileCount": 7
   },
   {
     "family": "Terminus",
@@ -1481,7 +1481,7 @@
     "tier": 5,
     "reload": 0.82,
     "ammo": "ar2",
-    "dps": 260
+    "projectileCount": 1
   },
   {
     "family": "Terminus",
@@ -1495,7 +1495,7 @@
     "tier": 5,
     "reload": 0.9,
     "ammo": "357",
-    "dps": 296
+    "projectileCount": 1
   },
   {
     "family": "ASMD",
@@ -1509,7 +1509,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "dps": 45
+    "projectileCount": 1
   },
   {
     "family": "Jackhammer",
@@ -1523,7 +1523,7 @@
     "tier": 5,
     "reload": 0.62,
     "ammo": "buckshot",
-    "dps": 360
+    "projectileCount": 9
   },
   {
     "family": "Impaler",
@@ -1537,7 +1537,7 @@
     "tier": 5,
     "reload": 0.85,
     "ammo": "XBowBolt",
-    "dps": 55
+    "projectileCount": 1
   },
   {
     "family": "Adonis",
@@ -1551,7 +1551,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "dps": 159
+    "projectileCount": 1
   },
   {
     "family": "Adonis",
@@ -1565,7 +1565,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "dps": 160
+    "projectileCount": 25
   },
   {
     "family": "Adonis",
@@ -1579,7 +1579,7 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "dps": 165
+    "projectileCount": 25
   },
   {
     "family": "Deathdealers",
@@ -1593,7 +1593,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 290
+    "projectileCount": 1
   },
   {
     "family": "Deathdealers",
@@ -1607,7 +1607,7 @@
     "tier": 6,
     "reload": 0.75,
     "ammo": "buckshot",
-    "dps": 224
+    "projectileCount": 1
   },
   {
     "family": "Deathdealers",
@@ -1621,7 +1621,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "buckshot",
-    "dps": 407
+    "projectileCount": 1
   },
   {
     "family": "Zeus",
@@ -1635,7 +1635,7 @@
     "tier": 6,
     "reload": 0.78,
     "ammo": "XBowBolt",
-    "dps": 93
+    "projectileCount": 1
   },
   {
     "family": "Bulwark",
@@ -1649,7 +1649,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "dps": 283
+    "projectileCount": 1
   },
   {
     "family": "Bulwark",
@@ -1663,7 +1663,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "dps": 323
+    "projectileCount": 1
   },
   {
     "family": "Bulwark",
@@ -1677,7 +1677,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "dps": 344
+    "projectileCount": 3
   },
   {
     "family": "Enforcers",
@@ -1691,7 +1691,7 @@
     "tier": 6,
     "reload": 1.1,
     "ammo": "pistol",
-    "dps": 346
+    "projectileCount": 1
   },
   {
     "family": "Enforcers",
@@ -1705,7 +1705,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pistol",
-    "dps": 117
+    "projectileCount": 1
   },
   {
     "family": "Glukhar",
@@ -1719,7 +1719,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "357",
-    "dps": 255
+    "projectileCount": 1
   },
   {
     "family": "Glukhar",
@@ -1733,7 +1733,7 @@
     "tier": 6,
     "reload": 0.888,
     "ammo": "ar2",
-    "dps": 250
+    "projectileCount": 1
   },
   {
     "family": "Colossus",
@@ -1747,7 +1747,7 @@
     "tier": 6,
     "reload": 1,
     "ammo": "357",
-    "dps": 64
+    "projectileCount": 1
   },
   {
     "family": "Spinfusor",
@@ -1761,7 +1761,7 @@
     "tier": 6,
     "reload": 0.82,
     "ammo": "pulse",
-    "dps": 80
+    "projectileCount": 1
   },
   {
     "family": "Spinfusor",
@@ -1775,7 +1775,7 @@
     "tier": 6,
     "reload": 1.1,
     "ammo": "pulse",
-    "dps": 304
+    "projectileCount": 1
   },
   {
     "family": "Interceptor",
@@ -1789,7 +1789,7 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "dps": 229
+    "projectileCount": 1
   },
   {
     "family": "Interceptor",
@@ -1803,7 +1803,7 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "dps": 190
+    "projectileCount": 1
   },
   {
     "family": "Interceptor",
@@ -1817,7 +1817,7 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "dps": 169
+    "projectileCount": 1
   },
   {
     "family": "Juggernaut",
@@ -1831,7 +1831,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "ar2",
-    "dps": 289
+    "projectileCount": 1
   },
   {
     "family": "Juggernaut",
@@ -1845,7 +1845,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "ar2",
-    "dps": 313
+    "projectileCount": 1
   },
   {
     "family": "Juggernaut",
@@ -1859,7 +1859,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 233
+    "projectileCount": 1
   },
   {
     "family": "XVL1456",
@@ -1873,7 +1873,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 229
+    "projectileCount": 1
   },
   {
     "family": "XVL1456",
@@ -1887,7 +1887,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 225
+    "projectileCount": 1
   },
   {
     "family": "Helios",
@@ -1901,7 +1901,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 208
+    "projectileCount": 1
   },
   {
     "family": "Helios",
@@ -1915,7 +1915,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 175
+    "projectileCount": 1
   },
   {
     "family": "Helios",
@@ -1929,7 +1929,7 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "dps": 190
+    "projectileCount": 1
   },
   {
     "family": "Thruster",
@@ -1943,7 +1943,7 @@
     "tier": 6,
     "reload": 0.53,
     "ammo": "impactmine",
-    "dps": 209
+    "projectileCount": 1
   },
   {
     "family": "Vector",
@@ -1957,6 +1957,6 @@
     "tier": 6,
     "reload": 0.89,
     "ammo": "smg1",
-    "dps": 246
+    "projectileCount": 1
   }
 ]

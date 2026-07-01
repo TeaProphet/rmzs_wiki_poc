@@ -37,6 +37,14 @@ for line in lines[1:]:
         vtype = f'branch_{vnum}'
 
     name = parts[3].strip()
+    damage = parse_num(parts[4])
+    delay = parse_num(parts[6])
+    dps = parse_num(parts[10])
+    
+    if dps and damage and delay:
+        proj_count = int(round(dps / (damage / delay)))
+    else:
+        proj_count = 1
 
     w = {
         'family':      parts[0].strip(),
@@ -44,13 +52,13 @@ for line in lines[1:]:
         'variantNum':  vnum,
         'file':        parts[2].strip(),
         'name':        name,
-        'damage':      parse_num(parts[4]),
+        'damage':      damage,
         'clipSize':    parse_num(parts[5]),
-        'delay':       parse_num(parts[6]),
+        'delay':       delay,
         'tier':        parse_num(parts[7]),
         'reload':      parse_num(parts[8]),
         'ammo':        parts[9].strip(),
-        'dps':         parse_num(parts[10]),
+        'projectileCount': proj_count,
     }
     weapons.append(w)
 

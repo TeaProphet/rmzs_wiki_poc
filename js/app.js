@@ -59,7 +59,7 @@ let allHistory = {};          // "family:vtype:stat" → [{patch,date,old,new}, 
 let latestChange = {};          // "family:vtype:stat" → {patch,date,old,new}  (most recent patch that touched it)
 let latestPatch = null;        // the changelog entry with the most recent date
 
-const filters = { search: '', tier: 'all', ammo: 'all' };
+const filters = { search: '', tier: 'all', ammo: 'all', sortBy: 'default', sortOrder: 'asc' };
 
 // ================================================================
 //  INIT
@@ -126,6 +126,16 @@ function buildChangesIndex() {
   allHistory = {};
   latestChange = {};
 
+  // Calculate initial DPS dynamically based on projectileCount
+  for (const w of weaponsData) {
+    w.projectileCount = w.projectileCount ?? 1;
+    if (w.damage && w.delay) {
+      w.dps = Math.round((w.damage * w.projectileCount) / w.delay);
+    } else {
+      w.dps = 0;
+    }
+  }
+
   // Sort changelog oldest→newest so we can build correct timelines
   const sorted = [...changelogData].sort((a, b) => new Date(a.date) - new Date(b.date));
   latestPatch = sorted.length ? sorted[sorted.length - 1] : null;
@@ -140,11 +150,16 @@ function buildChangesIndex() {
       }
 
       const base = `${weapon.family}:${weapon.variantType}`;
+      let hasDmgOrDlyChange = false;
+
       for (const [stat, val] of Object.entries(ch.stats)) {
+        if (stat === 'damage' || stat === 'delay') {
+          hasDmgOrDlyChange = true;
+        }
+
         const key = `${base}:${stat}`;
         if (!allHistory[key]) allHistory[key] = [];
 
-        // The old value is what the weapon currently holds (before this patch)
         const oldVal = weapon[stat];
         const newVal = val;
 
@@ -154,6 +169,25 @@ function buildChangesIndex() {
 
         // Update the weapon's state in-place to the new value
         weapon[stat] = newVal;
+      }
+
+      // Automatically recalculate and override DPS if damage or delay changed
+      if (hasDmgOrDlyChange) {
+        if (weapon.damage && weapon.delay) {
+          const newDps = Math.round((weapon.damage * weapon.projectileCount) / weapon.delay);
+          const oldDps = weapon.dps;
+          
+          if (newDps !== oldDps) {
+            const key = `${base}:dps`;
+            if (!allHistory[key]) allHistory[key] = [];
+
+            const entry = { patch: patch.patch, date: patch.date, old: oldDps, new: newDps };
+            allHistory[key].push(entry);
+            latestChange[key] = entry;   // overwrite → keeps the most recent
+
+            weapon.dps = newDps;
+          }
+        }
       }
     }
   }
@@ -221,11 +255,16 @@ function setupEvents() {
       closeModal();
     }
 
-    // Filter chips
+    // Filter chips / Sort chips
     const chip = e.target.closest('.chip');
     if (chip) {
-      if (chip.dataset.tier !== undefined) toggleFilter('tier', chip.dataset.tier);
-      else if (chip.dataset.ammo !== undefined) toggleFilter('ammo', chip.dataset.ammo);
+      if (chip.dataset.tier !== undefined) {
+        toggleFilter('tier', chip.dataset.tier);
+      } else if (chip.dataset.ammo !== undefined) {
+        toggleFilter('ammo', chip.dataset.ammo);
+      } else if (chip.dataset.sort !== undefined) {
+        toggleSort(chip.dataset.sort);
+      }
       return;
     }
 
@@ -273,6 +312,22 @@ function toggleFilter(type, value) {
   renderWeapons();
 }
 
+function toggleSort(value) {
+  if (filters.sortBy === value) {
+    if (value !== 'default') {
+      filters.sortOrder = filters.sortOrder === 'asc' ? 'desc' : 'asc';
+    }
+  } else {
+    filters.sortBy = value;
+    if (value === 'default' || value === 'delay' || value === 'reload') {
+      filters.sortOrder = 'asc';
+    } else {
+      filters.sortOrder = 'desc';
+    }
+  }
+  renderWeapons();
+}
+
 // ================================================================
 //  VIEW: WEAPONS LIST
 // ================================================================
@@ -291,12 +346,25 @@ function renderWeapons() {
     return true;
   });
 
-  // Sort: tier -> family name -> variant number
-  filteredWeapons.sort((a, b) => {
-    return ((a.tier ?? 99) - (b.tier ?? 99)) ||
-      a.family.localeCompare(b.family) ||
-      (a.variantNum - b.variantNum);
-  });
+  // Sort:
+  if (filters.sortBy === 'default') {
+    filteredWeapons.sort((a, b) => {
+      return ((a.tier ?? 99) - (b.tier ?? 99)) ||
+        a.family.localeCompare(b.family) ||
+        (a.variantNum - b.variantNum);
+    });
+  } else {
+    const key = filters.sortBy;
+    const isAsc = filters.sortOrder === 'asc';
+    filteredWeapons.sort((a, b) => {
+      const valA = a[key] ?? (isAsc ? 999999 : -999999);
+      const valB = b[key] ?? (isAsc ? 999999 : -999999);
+      if (valA === valB) {
+        return a.family.localeCompare(b.family) || (a.variantNum - b.variantNum);
+      }
+      return isAsc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    });
+  }
 
   document.getElementById('app').innerHTML = `
     <div class="filters-bar">
@@ -311,11 +379,39 @@ function renderWeapons() {
       <div class="filter-group">
         <span class="filter-label">Патроны</span>
         <div class="filter-chips">
-          ${allAmmos.map(a => `
-            <button class="chip${filters.ammo === a ? ' active' : ''}" data-ammo="${a}">
-              ${AMMO_LABELS[a] ?? a}
-            </button>
-          `).join('')}
+          ${allAmmos.map(a => {
+            const isActive = filters.ammo === a;
+            const ammoClr = AMMO_COLORS[a] ?? '#888';
+            const styleAttr = isActive ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26;"` : '';
+            return `
+              <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr}>
+                ${AMMO_LABELS[a] ?? a}
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Сортировка</span>
+        <div class="filter-chips">
+          <button class="chip${filters.sortBy === 'default' ? ' active' : ''}" data-sort="default">
+            По умолчанию
+          </button>
+          <button class="chip${filters.sortBy === 'damage' ? ' active' : ''}" data-sort="damage">
+            Урон ${filters.sortBy === 'damage' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+          </button>
+          <button class="chip${filters.sortBy === 'dps' ? ' active' : ''}" data-sort="dps">
+            DPS ${filters.sortBy === 'dps' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+          </button>
+          <button class="chip${filters.sortBy === 'clipSize' ? ' active' : ''}" data-sort="clipSize">
+            Магазин ${filters.sortBy === 'clipSize' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+          </button>
+          <button class="chip${filters.sortBy === 'delay' ? ' active' : ''}" data-sort="delay">
+            Задержка ${filters.sortBy === 'delay' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+          </button>
+          <button class="chip${filters.sortBy === 'reload' ? ' active' : ''}" data-sort="reload">
+            Перезарядка ${filters.sortBy === 'reload' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+          </button>
         </div>
       </div>
     </div>
