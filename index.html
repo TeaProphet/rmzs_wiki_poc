@@ -8,28 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script>
-    (async function() {
-      let version = '1.0';
-      try {
-        const res = await fetch('data/changelog.json?t=' + Date.now());
-        const changelog = await res.json();
-        if (changelog && changelog.length > 0) {
-          version = changelog[0].patch + '_' + changelog[0].date;
-        }
-      } catch (e) {
-        console.error('Failed to fetch changelog for cache busting, falling back to timestamp', e);
-        version = Date.now();
-      }
+    (function() {
+      const v = Date.now();
 
       // Inject style.css
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = 'css/style.css?v=' + version;
+      link.href = 'css/style.css?v=' + v;
       document.head.appendChild(link);
 
       // Inject app.js
       const script = document.createElement('script');
-      script.src = 'js/app.js?v=' + version;
+      script.src = 'js/app.js?v=' + v;
       document.head.appendChild(script);
     })();
   </script>
