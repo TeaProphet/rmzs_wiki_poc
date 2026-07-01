@@ -7,7 +7,32 @@
   <title>RMZS Wiki — База оружия</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=1.2">
+  <script>
+    (async function() {
+      let version = '1.0';
+      try {
+        const res = await fetch('data/changelog.json?t=' + Date.now());
+        const changelog = await res.json();
+        if (changelog && changelog.length > 0) {
+          version = changelog[0].patch + '_' + changelog[0].date;
+        }
+      } catch (e) {
+        console.error('Failed to fetch changelog for cache busting, falling back to timestamp', e);
+        version = Date.now();
+      }
+
+      // Inject style.css
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'css/style.css?v=' + version;
+      document.head.appendChild(link);
+
+      // Inject app.js
+      const script = document.createElement('script');
+      script.src = 'js/app.js?v=' + version;
+      document.head.appendChild(script);
+    })();
+  </script>
 </head>
 <body>
 
@@ -49,6 +74,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=1.2"></script>
+  <!-- app.js is injected dynamically by the script in head -->
 </body>
 </html>

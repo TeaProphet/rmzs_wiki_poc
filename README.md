@@ -71,35 +71,53 @@ python -m http.server 8080
 - **`file`**: имя файла скрипта оружия (например, `weapon_zs_chempistol` или `weapon_zs_mr96`).
 - **`stats`**: перечисляются только те характеристики, которые изменились, в формате `"название_стата": новое_значение`.
   *Доступные характеристики: `damage` (урон), `clipSize` (магазин), `delay` (задержка), `reload` (перезаряд), `dps` (DPS).*
-- **`variantType` (необязательно)**: если один файл скрипта используется несколькими ветками оружия (например, `weapon_zs_amigo` используется для `Comrade` и `Horizon`), явно укажите ветку, чтобы избежать неоднозначности:
+- **`variantType` (необязательно)**: требуется указывать **только** для тех скриптов, которые делятся между несколькими ветками оружия. Укажите ветку, чтобы избежать неоднозначности:
   - `"base"` — базовое оружие
   - `"branch_1"` — Ветка 1
   - `"branch_2"` — Ветка 2
   - `"branch_3"` — Ветка 3
+
+  **Список файлов-исключений, для которых обязательно указывать `variantType`:**
+  - `weapon_zs_crackler` (Crackler Assault Rifle)
+  - `weapon_zs_stabber` (Bayonet M1 Garand, Stabber M1 Garand)
+  - `weapon_zs_amigo` (Amigo Assault Rifle, Comrade Assault Rifle, Horizon Assault Rifle)
+  - `weapon_zs_magnum` (Ricochete Magnum, Backlash Magnum)
+  - `weapon_zs_glock3` (Crossfire Glock 3, Collider Glock 3)
+  - `weapon_zs_inquisitor` (Inquisitor Crossbow, Absolver Crossbow)
+  - `weapon_zs_novablaster` (Nova Blaster Pulse Revolver, Nova Helix Pulse Revolver)
+  - `weapon_zs_uzi` (Sprayer Uzi 9mm, Disperser Uzi 9mm)
+  - `weapon_zs_oberon` (Oberon Pulse Shotgun)
+  - `weapon_zs_rebel` (Rebel Shotgun)
+  - `weapon_zs_tempest` (Tempest Burst Pistol, Cosmos Burst Pistol)
+  - `weapon_zs_tosser` (Tosser SMG, Thrower SMG)
+  - `weapon_zs_deagle` (Zombie Drill Desert Eagle, Faraday Desert Eagle, Seditionist Desert Eagle)
+  - `weapon_zs_quasar` (Quasar Pulse Rifle, Blazar Pulse Rifle)
+  - `weapon_ze_sweepershotgun` (Sweeper Shotgun, Boomer Shotgun)
+  - `weapon_ze_headhunter` (Headhunter Pistol, Speedy Pistol, Russell Pistol)
+  - `weapon_zs_quicksilver` (Quicksilver Semi-Auto Rifle, Mercurial Semi-Auto Rifle)
+  - `weapon_zs_artemis` (Artemis Dual Crossbows, Actaeon Dual Crossbows)
+  - `weapon_zs_slugrifle` (Tiny Slug Rifle)
+  - `weapon_zs_plasmarifle` (IMk Plasma Projector, IIMk Plasma Projector, VMk Plasma Projector)
+  - `weapon_zs_spas12` (Scattershot Shotgun, Eradicator Shotgun)
+  - `weapon_zs_servitor` (Servitor Pulse Rifle)
+  - `weapon_zs_minigun` (Bulwark Minigun, Fury Minigun)
+  - `weapon_zs_interceptor` (Interceptor Plasma Rifle, Amber Plasma Rifle, Permafrost Plasma Rifle)
+  - `weapon_zs_taucannon` (XVL1456 Tau Cannon, Vanquisher Tau Cannon)
+  - `weapon_ze_gluon2` (Helios Gluon Gun, Hades Gluon Gun, Tartarus Gluon Gun)
+
 - **`note` (необязательно)**: ваш комментарий/пояснение к изменению.
 
 > **Как рассчитывается разница (Дельта)?**  
 > Сайт работает по хронологическому принципу прямого наложения изменений. Он автоматически берет исходные данные из `weapons.json` и применяет патчи по очереди. Старые значения (`old`) вычисляются автоматически из предыдущего патча в истории (или из `weapons.json`, если это первое изменение характеристики).
 
-### 3. Обновить версию кэша в index.html
-
-Чтобы браузеры игроков гарантированно скачали обновлённые файлы — **при каждом деплое** обновляйте версию скриптов в `index.html`:
-
-```html
-<!-- Было -->
-<link rel="stylesheet" href="css/style.css?v=1.2">
-<script src="js/app.js?v=1.2"></script>
-
-<!-- Стало (следующий патч) -->
-<link rel="stylesheet" href="css/style.css?v=1.3">
-<script src="js/app.js?v=1.3"></script>
-```
-
-### 4. Задеплоить
+### 3. Задеплоить
 
 ```bash
-git add data/weapons.json data/changelog.json index.html
-git commit -m "Patch v1.2"
+git add data/changelog.json
+# (Добавляйте data/weapons.json только если вы обновляли исходную базу данных оружия в п.1!)
+# git add data/weapons.json 
+
+git commit -m "Patch vN"
 git push
 ```
 
@@ -107,12 +125,54 @@ GitHub Pages обновит сайт автоматически через ~1 м
 
 ---
 
-## Настройка GitHub Pages
+## Настройка GitHub Pages (Пошагово для новичков)
 
-1. Создать репозиторий на GitHub
-2. `git push` всех файлов
-3. Settings → Pages → Source: **Deploy from branch** → ветка `main`, папка `/ (root)`
-4. Сайт будет доступен по адресу `https://<username>.github.io/<repo-name>`
+Если вы никогда ранее не пользовались GitHub, следуйте этой инструкции, чтобы опубликовать ваш сайт в сети:
+
+### Шаг 1. Подготовка аккаунта и Git
+1. Зарегистрируйтесь на сайте [github.com](https://github.com/) (если у вас еще нет аккаунта).
+2. Установите [Git для Windows](https://git-scm.com/download/win), если он еще не установлен.
+3. Откройте терминал (PowerShell или Git Bash) в папке проекта на вашем компьютере и настройте ваше имя и почту (они нужны для подписи коммитов):
+   ```bash
+   git config --global user.name "Ваше Имя"
+   git config --global user.email "your-email@example.com"
+   ```
+
+### Шаг 2. Создание репозитория на GitHub
+1. Перейдите на главную страницу GitHub и нажмите зеленую кнопку **New** (или `+` в правом верхнем углу -> **New repository**).
+2. В поле **Repository name** введите название проекта (например, `rmzs-wiki`).
+3. Убедитесь, что выбран тип **Public** (публичный). Это обязательно, так как на бесплатном тарифе GitHub Pages работает только для публичных репозиториев.
+4. **ВАЖНО**: Не ставьте галочки под пунктами *Add a README file*, *Add .gitignore* или *Choose a license*. Репозиторий должен остаться абсолютно пустым.
+5. Нажмите кнопку **Create repository** (Создать репозиторий).
+
+### Шаг 3. Загрузка файлов проекта на GitHub
+1. После создания репозитория перед вами откроется страница с быстрыми настройками. Найдите блок команд под заголовком `...or push an existing repository from the command line` (или скопируйте команды ниже):
+   ```bash
+   # Привязать локальную папку к созданному репозиторию на GitHub
+   git remote add origin https://github.com/ВАШ_НИКНЕЙМ/rmzs-wiki.git
+   
+   # Переименовать основную ветку в main
+   git branch -M main
+   
+   # Залить все файлы на сервер (у вас может потребоваться авторизоваться в GitHub в окне браузера)
+   git push -u origin main
+   ```
+2. Откройте консоль в папке с вашим проектом на компьютере, вставьте эти команды по очереди и нажмите Enter.
+
+### Шаг 4. Включение GitHub Pages
+1. В вашем репозитории на GitHub перейдите во вкладку **Settings** (Настройки) на верхней горизонтальной панели.
+2. В меню слева найдите и выберите пункт **Pages** (Страницы).
+3. В разделе **Build and deployment**:
+   - В выпадающем списке **Source** выберите вариант `Deploy from a branch` (он выбран по умолчанию).
+   - В выпадающем списке **Branch** выберите ветку `main` вместо `None`.
+   - В соседнем выпадающем списке папок оставьте `/ (root)`.
+4. Нажмите кнопку **Save** (Сохранить).
+
+### Шаг 5. Проверка сайта
+1. Подождите около 1–2 минут, пока GitHub соберет и опубликует ваш сайт.
+2. Обновите вкладку **Settings -> Pages** в браузере (F5).
+3. Наверху страницы появится зеленая плашка с текстом: **"Your site is live at [ссылка]"**.
+4. Кликните по ссылке — ваш сайт запущен и готов к работе! При каждом последующем `git push` изменения автоматически появятся по этой ссылке.
 
 ---
 
