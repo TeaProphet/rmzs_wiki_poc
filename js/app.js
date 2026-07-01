@@ -79,7 +79,7 @@ async function init() {
       <div class="empty-state">
         <h3>Ошибка загрузки</h3>
         <p>${err.message}</p>
-        <p style="margin-top:8px;font-size:11px">Запустите сервер: <code>python -m http.server 8080</code></p>
+        <p style="margin-top:8px;font-size:11px">Запустите сервер: <code>python -m http.server 8000</code></p>
       </div>`;
   }
 }
@@ -217,26 +217,23 @@ function renderWeapons() {
   const allTiers = [...new Set(weaponsData.map(w => w.tier).filter(t => t != null))].sort((a, b) => a - b);
   const allAmmos = [...new Set(weaponsData.map(w => w.ammo))].sort();
 
-  // Filter families
-  const results = [];
-  for (const [family, variants] of familyMap) {
-    const base = variants.find(v => v.variantType === 'base') || variants[0];
-
-    if (filters.tier !== 'all' && String(base.tier) !== filters.tier) continue;
-    if (filters.ammo !== 'all' && !variants.some(v => v.ammo === filters.ammo)) continue;
+  // Filter individual weapons (all variants, not just base)
+  const filteredWeapons = weaponsData.filter(w => {
+    if (filters.tier !== 'all' && String(w.tier) !== filters.tier) return false;
+    if (filters.ammo !== 'all' && w.ammo !== filters.ammo) return false;
     if (filters.search) {
       const q = filters.search;
-      const hit = family.toLowerCase().includes(q)
-        || variants.some(v => v.name.toLowerCase().includes(q));
-      if (!hit) continue;
+      return w.family.toLowerCase().includes(q) || w.name.toLowerCase().includes(q);
     }
-    results.push({ family, variants, base });
-  }
+    return true;
+  });
 
-  // Sort: tier asc, then alphabetical
-  results.sort((a, b) =>
-    ((a.base.tier ?? 99) - (b.base.tier ?? 99)) || a.family.localeCompare(b.family)
-  );
+  // Sort: tier -> family name -> variant number
+  filteredWeapons.sort((a, b) => {
+    return ((a.tier ?? 99) - (b.tier ?? 99)) ||
+           a.family.localeCompare(b.family) ||
+           (a.variantNum - b.variantNum);
+  });
 
   document.getElementById('app').innerHTML = `
     <div class="filters-bar">
@@ -260,28 +257,33 @@ function renderWeapons() {
       </div>
     </div>
     <div class="results-info">
-      Показано семейств: <strong>${results.length}</strong> из <strong>${familyMap.size}</strong>
+      Показано оружия: <strong>${filteredWeapons.length}</strong> из <strong>${weaponsData.length}</strong>
     </div>
-    ${results.length === 0
+    ${filteredWeapons.length === 0
       ? `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другой запрос или сбросьте фильтры</p></div>`
-      : `<div class="weapons-grid">${results.map(r => renderFamilyCard(r)).join('')}</div>`
+      : `<div class="weapons-grid">${filteredWeapons.map(renderWeaponCard).join('')}</div>`
     }
   `;
 }
 
-function renderFamilyCard({ family, variants, base }) {
-  const tier     = base.tier;
-  const ammo     = base.ammo;
+function renderWeaponCard(w) {
+  const family   = w.family;
+  const tier     = w.tier;
+  const ammo     = w.ammo;
   const ammoClr  = AMMO_COLORS[ammo] ?? '#888';
   const ammoLbl  = AMMO_LABELS[ammo] ?? ammo;
+  const vtag     = VARIANT_LABELS[w.variantType] ?? w.variantType;
+
+  // Find other variants in this family to know the branch count
+  const variants = familyMap.get(family) || [];
   const varCount = variants.length - 1;
 
   const statsHtml = STAT_DEFS.map(s => {
-    const val = base[s.key];
-    const ci  = changeIndicatorHtml(family, 'base', s.key);
-    const hasHist = !!allHistory[`${family}:base:${s.key}`];
+    const val     = w[s.key];
+    const ci      = changeIndicatorHtml(family, w.variantType, s.key);
+    const hasHist = !!allHistory[`${family}:${w.variantType}:${s.key}`];
     const attrs   = hasHist
-      ? `data-stat="${s.key}" data-family="${esc(family)}" data-vtype="base" data-label="${s.label}" data-wname="${esc(base.name)}"`
+      ? `data-stat="${s.key}" data-family="${esc(family)}" data-vtype="${w.variantType}" data-label="${s.label}" data-wname="${esc(w.name)}"`
       : '';
     const valHtml = val != null
       ? `${val}${s.unit ? `<span class="stat-unit">${s.unit}</span>` : ''}${ci}`
@@ -297,8 +299,8 @@ function renderFamilyCard({ family, variants, base }) {
     <div class="family-card ${tc(tier)}" data-family="${esc(family)}">
       <div class="card-header">
         <div class="card-header-info">
-          <div class="family-name">${family}</div>
-          <div class="base-weapon-name">${base.name}</div>
+          <div class="family-name">${w.name}</div>
+          <div class="base-weapon-name">${family} · ${vtag}</div>
         </div>
         <div class="card-badges">
           <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
@@ -310,8 +312,8 @@ function renderFamilyCard({ family, variants, base }) {
       <div class="card-footer">
         <span class="variants-label">
           ${varCount > 0
-            ? `<strong>${varCount}</strong> ${pluralVariant(varCount)}`
-            : 'Нет веток'}
+            ? `Веток: <strong>${variants.length}</strong>`
+            : 'Веток: 1'}
         </span>
         <span class="card-arrow">Подробнее →</span>
       </div>
