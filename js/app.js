@@ -8,41 +8,41 @@
 //  CONFIG
 // ================================================================
 const STAT_DEFS = [
-  { key: 'damage',   label: 'Урон',      unit: ''  },
-  { key: 'clipSize', label: 'Магазин',   unit: ''  },
-  { key: 'delay',    label: 'Задержка',  unit: 'с' },
-  { key: 'reload',   label: 'Перезаряд', unit: 'с' },
-  { key: 'dps',      label: 'DPS',       unit: ''  },
+  { key: 'damage', label: 'Урон', unit: '' },
+  { key: 'clipSize', label: 'Магазин', unit: '' },
+  { key: 'delay', label: 'Задержка', unit: 'с' },
+  { key: 'reload', label: 'Перезаряд', unit: 'с' },
+  { key: 'dps', label: 'DPS', unit: '' },
 ];
 
 const AMMO_LABELS = {
-  '357':        '.357',
-  'XBowBolt':   'Болт',
-  'ar2':        'AR2',
-  'buckshot':   'Дробь',
-  'chemical':   'Хим',
+  '357': '.357',
+  'XBowBolt': 'Болт',
+  'ar2': 'AR2',
+  'buckshot': 'Дробь',
+  'chemical': 'Хим',
   'impactmine': 'Мина',
-  'pistol':     'Пист.',
-  'pulse':      'Импульс',
-  'scrap':      'Лом',
-  'smg1':       'SMG',
+  'pistol': 'Пист.',
+  'pulse': 'Импульс',
+  'scrap': 'Лом',
+  'smg1': 'SMG',
 };
 
 const AMMO_COLORS = {
-  '357':        '#f87171',
-  'XBowBolt':   '#e879f9',
-  'ar2':        '#34d399',
-  'buckshot':   '#fb923c',
-  'chemical':   '#86efac',
+  '357': '#f87171',
+  'XBowBolt': '#e879f9',
+  'ar2': '#34d399',
+  'buckshot': '#fb923c',
+  'chemical': '#86efac',
   'impactmine': '#fbbf24',
-  'pistol':     '#94a3b8',
-  'pulse':      '#818cf8',
-  'scrap':      '#d6d3d1',
-  'smg1':       '#60a5fa',
+  'pistol': '#94a3b8',
+  'pulse': '#818cf8',
+  'scrap': '#d6d3d1',
+  'smg1': '#60a5fa',
 };
 
 const VARIANT_LABELS = {
-  'base':     'Базовое',
+  'base': 'Базовое',
   'branch_1': 'Ветка 1',
   'branch_2': 'Ветка 2',
   'branch_3': 'Ветка 3',
@@ -52,12 +52,12 @@ const VARIANT_LABELS = {
 // ================================================================
 //  STATE
 // ================================================================
-let weaponsData  = [];
+let weaponsData = [];
 let changelogData = [];
-let familyMap    = new Map();   // family → sorted variants[]
-let allHistory   = {};          // "family:vtype:stat" → [{patch,date,old,new}, …]
+let familyMap = new Map();   // family → sorted variants[]
+let allHistory = {};          // "family:vtype:stat" → [{patch,date,old,new}, …]
 let latestChange = {};          // "family:vtype:stat" → {patch,date,old,new}  (most recent patch that touched it)
-let latestPatch  = null;        // the changelog entry with the most recent date
+let latestPatch = null;        // the changelog entry with the most recent date
 
 const filters = { search: '', tier: 'all', ammo: 'all' };
 
@@ -99,24 +99,57 @@ function buildFamilyMap() {
   }
 }
 
+function findWeaponForChange(ch) {
+  if (!ch.file) return null;
+  const candidates = weaponsData.filter(w => w.file === ch.file);
+  if (candidates.length === 0) return null;
+  if (candidates.length === 1) return candidates[0];
+
+  const vtype = ch.variantType || (ch.variantNum !== undefined ? `branch_${ch.variantNum}` : (ch.variant !== undefined ? `branch_${ch.variant}` : null));
+  if (vtype) {
+    const match = candidates.find(w => w.variantType === (vtype === 'branch_0' ? 'base' : vtype) || w.variantType === vtype);
+    if (match) return match;
+  }
+  if (ch.weaponName) {
+    const match = candidates.find(w => w.name === ch.weaponName);
+    if (match) return match;
+  }
+
+  return candidates[0];
+}
+
 function buildChangesIndex() {
-  allHistory   = {};
+  allHistory = {};
   latestChange = {};
 
   // Sort changelog oldest→newest so we can build correct timelines
   const sorted = [...changelogData].sort((a, b) => new Date(a.date) - new Date(b.date));
-  latestPatch  = sorted.length ? sorted[sorted.length - 1] : null;
+  latestPatch = sorted.length ? sorted[sorted.length - 1] : null;
 
   for (const patch of sorted) {
     if (!patch.changes?.length) continue;
     for (const ch of patch.changes) {
-      const base = `${ch.family}:${ch.variantType}`;
-      for (const [stat, vals] of Object.entries(ch.stats)) {
+      const weapon = findWeaponForChange(ch);
+      if (!weapon) {
+        console.warn('Weapon not found for changelog entry:', ch);
+        continue;
+      }
+
+      const base = `${weapon.family}:${weapon.variantType}`;
+      for (const [stat, val] of Object.entries(ch.stats)) {
         const key = `${base}:${stat}`;
         if (!allHistory[key]) allHistory[key] = [];
-        const entry = { patch: patch.patch, date: patch.date, old: vals.old, new: vals.new };
+
+        // The old value is what the weapon currently holds (before this patch)
+        const oldVal = weapon[stat];
+        const newVal = val;
+
+        const entry = { patch: patch.patch, date: patch.date, old: oldVal, new: newVal };
         allHistory[key].push(entry);
         latestChange[key] = entry;   // overwrite → keeps the most recent
+
+        // Update the weapon's state in-place to the new value
+        weapon[stat] = newVal;
       }
     }
   }
@@ -127,13 +160,25 @@ function buildChangesIndex() {
 // ================================================================
 function handleRoute() {
   const hash = location.hash || '#weapons';
-  const tabW  = document.getElementById('tab-weapons');
+  const tabW = document.getElementById('tab-weapons');
   const tabCL = document.getElementById('tab-changelog');
 
-  if (hash === '#changelog') {
+  if (hash === '#changelog' || hash.startsWith('#patch-')) {
     tabW.classList.remove('active');
     tabCL.classList.add('active');
     renderChangelog();
+
+    if (hash.startsWith('#patch-')) {
+      const patchId = decodeURIComponent(hash.slice(1));
+      setTimeout(() => {
+        const targetEl = document.getElementById(patchId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.classList.add('highlight-flash');
+          setTimeout(() => targetEl.classList.remove('highlight-flash'), 2000);
+        }
+      }, 50);
+    }
   } else if (hash.startsWith('#family/')) {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
@@ -167,11 +212,25 @@ function setupEvents() {
     if (e.target.id === 'modal-overlay') { closeModal(); return; }
     if (e.target.id === 'modal-close-btn') { closeModal(); return; }
 
+    // Close modal when clicking links inside it (e.g. patch links)
+    if (e.target.closest('[data-close-modal]')) {
+      closeModal();
+    }
+
     // Filter chips
     const chip = e.target.closest('.chip');
     if (chip) {
       if (chip.dataset.tier !== undefined) toggleFilter('tier', chip.dataset.tier);
       else if (chip.dataset.ammo !== undefined) toggleFilter('ammo', chip.dataset.ammo);
+      return;
+    }
+
+    // Change indicator arrow click -> navigate to patch
+    const ciEl = e.target.closest('[data-patch]');
+    if (ciEl) {
+      e.stopPropagation();
+      closeModal();
+      location.hash = '#patch-' + encodeURIComponent(ciEl.dataset.patch);
       return;
     }
 
@@ -231,8 +290,8 @@ function renderWeapons() {
   // Sort: tier -> family name -> variant number
   filteredWeapons.sort((a, b) => {
     return ((a.tier ?? 99) - (b.tier ?? 99)) ||
-           a.family.localeCompare(b.family) ||
-           (a.variantNum - b.variantNum);
+      a.family.localeCompare(b.family) ||
+      (a.variantNum - b.variantNum);
   });
 
   document.getElementById('app').innerHTML = `
@@ -267,22 +326,22 @@ function renderWeapons() {
 }
 
 function renderWeaponCard(w) {
-  const family   = w.family;
-  const tier     = w.tier;
-  const ammo     = w.ammo;
-  const ammoClr  = AMMO_COLORS[ammo] ?? '#888';
-  const ammoLbl  = AMMO_LABELS[ammo] ?? ammo;
-  const vtag     = VARIANT_LABELS[w.variantType] ?? w.variantType;
+  const family = w.family;
+  const tier = w.tier;
+  const ammo = w.ammo;
+  const ammoClr = AMMO_COLORS[ammo] ?? '#888';
+  const ammoLbl = AMMO_LABELS[ammo] ?? ammo;
+  const vtag = VARIANT_LABELS[w.variantType] ?? w.variantType;
 
   // Find other variants in this family to know the branch count
   const variants = familyMap.get(family) || [];
   const varCount = variants.length - 1;
 
   const statsHtml = STAT_DEFS.map(s => {
-    const val     = w[s.key];
-    const ci      = changeIndicatorHtml(family, w.variantType, s.key);
+    const val = w[s.key];
+    const ci = changeIndicatorHtml(family, w.variantType, s.key);
     const hasHist = !!allHistory[`${family}:${w.variantType}:${s.key}`];
-    const attrs   = hasHist
+    const attrs = hasHist
       ? `data-stat="${s.key}" data-family="${esc(family)}" data-vtype="${w.variantType}" data-label="${s.label}" data-wname="${esc(w.name)}"`
       : '';
     const valHtml = val != null
@@ -312,8 +371,8 @@ function renderWeaponCard(w) {
       <div class="card-footer">
         <span class="variants-label">
           ${varCount > 0
-            ? `Веток: <strong>${variants.length}</strong>`
-            : 'Веток: 1'}
+      ? `Веток: <strong>${variants.length}</strong>`
+      : 'Веток: 1'}
         </span>
         <span class="card-arrow">Подробнее →</span>
       </div>
@@ -330,12 +389,29 @@ function renderFamilyDetail(family) {
   const base = variants.find(v => v.variantType === 'base') || variants[0];
   const tier = base.tier;
 
+  // Filter patches that have changes for this family
+  const familyPatches = [];
+  const sortedPatches = [...changelogData].sort((a, b) => new Date(b.date) - new Date(a.date));
+  for (const patch of sortedPatches) {
+    if (!patch.changes?.length) continue;
+    const matchingChanges = patch.changes.filter(ch => {
+      const w = findWeaponForChange(ch);
+      return w && w.family === family;
+    });
+    if (matchingChanges.length > 0) {
+      familyPatches.push({
+        ...patch,
+        changes: matchingChanges
+      });
+    }
+  }
+
   // Column headers
   const colHeaders = variants.map(v => {
     const ammoClr = AMMO_COLORS[v.ammo] ?? '#888';
     const ammoLbl = AMMO_LABELS[v.ammo] ?? v.ammo;
-    const isBase  = v.variantType === 'base';
-    const vtag    = VARIANT_LABELS[v.variantType] ?? v.variantType;
+    const isBase = v.variantType === 'base';
+    const vtag = VARIANT_LABELS[v.variantType] ?? v.variantType;
     return `
       <th>
         <div class="col-header">
@@ -351,9 +427,9 @@ function renderFamilyDetail(family) {
   // Stat rows
   const statRows = STAT_DEFS.map(s => {
     const cells = variants.map(v => {
-      const val     = v[s.key];
+      const val = v[s.key];
       const hasHist = !!allHistory[`${family}:${v.variantType}:${s.key}`];
-      const ci      = changeIndicatorHtml(family, v.variantType, s.key);
+      const ci = changeIndicatorHtml(family, v.variantType, s.key);
       const valHtml = val != null
         ? `${val}${s.unit ? `<span class="stat-unit"> ${s.unit}</span>` : ''}${ci}`
         : `<span class="stat-na">—</span>`;
@@ -403,6 +479,15 @@ function renderFamilyDetail(family) {
           ${fileRow}
         </tbody>
       </table>
+    </div>
+    <div class="detail-changelog-section" style="margin-top: 40px;">
+      <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">
+        История изменений оружия
+      </h3>
+      ${familyPatches.length === 0
+      ? `<p class="no-changes" style="font-style: italic; color: var(--text-3);">Изменений для этого оружия не зафиксировано.</p>`
+      : `<div class="changelog-wrap">${familyPatches.map(renderPatchCard).join('')}</div>`
+    }
     </div>`;
 }
 
@@ -415,9 +500,9 @@ function renderChangelog() {
   document.getElementById('app').innerHTML = `
     <div class="changelog-wrap">
       ${sorted.length === 0
-        ? `<div class="empty-state"><h3>Changelog пуст</h3><p>Появится после первого патча</p></div>`
-        : sorted.map(renderPatchCard).join('')
-      }
+      ? `<div class="empty-state"><h3>Changelog пуст</h3><p>Появится после первого патча</p></div>`
+      : sorted.map(renderPatchCard).join('')
+    }
     </div>`;
 }
 
@@ -425,10 +510,10 @@ function renderPatchCard(patch) {
   const changes = patch.changes ?? [];
   const changesHtml = changes.length === 0
     ? '<p class="no-changes">Первоначальная публикация — изменений нет.</p>'
-    : changes.map(renderChangeCard).join('');
+    : changes.map(ch => renderChangeCard(ch, patch.patch)).join('');
 
   return `
-    <div class="patch-card">
+    <div class="patch-card" id="patch-${patch.patch}">
       <div class="patch-head">
         <span class="patch-version">${patch.patch}</span>
         <span class="patch-date">${fmtDate(patch.date)}</span>
@@ -439,28 +524,44 @@ function renderPatchCard(patch) {
     </div>`;
 }
 
-function renderChangeCard(ch) {
-  const variants  = familyMap.get(ch.family) ?? [];
-  const weapon    = variants.find(v => v.variantType === ch.variantType);
-  const wname     = ch.weaponName ?? weapon?.name ?? ch.family;
-  const tier      = weapon?.tier;
-  const vtag      = VARIANT_LABELS[ch.variantType] ?? ch.variantType;
+function renderChangeCard(ch, patchVersion) {
+  const weapon = findWeaponForChange(ch);
+  if (!weapon) return '';
 
-  const diffs = Object.entries(ch.stats).map(([stat, vals]) => {
-    const def  = STAT_DEFS.find(s => s.key === stat);
-    const lbl  = def?.label ?? stat;
+  const family = weapon.family;
+  const variantType = weapon.variantType;
+  const wname = weapon.name;
+  const tier = weapon.tier;
+  const vtag = VARIANT_LABELS[variantType] ?? variantType;
+  const baseKey = `${family}:${variantType}`;
+
+  const diffs = Object.entries(ch.stats).map(([stat, val]) => {
+    const def = STAT_DEFS.find(s => s.key === stat);
+    const lbl = def?.label ?? stat;
     const unit = def?.unit ?? '';
-    const num  = typeof vals.new === 'number' && typeof vals.old === 'number';
-    const isBuff = num && vals.new > vals.old;
-    const isNerf = num && vals.new < vals.old;
-    const cls  = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
-    const delta = num ? (isBuff ? `+${r2(vals.new - vals.old)}` : `${r2(vals.new - vals.old)}`) : '';
+
+    // Get the resolved history entry for this patch and stat
+    const historyKey = `${baseKey}:${stat}`;
+    const history = allHistory[historyKey] || [];
+    const entry = history.find(h => h.patch === patchVersion) || {};
+
+    const oldVal = entry.old;
+    const newVal = entry.new;
+
+    const num = typeof newVal === 'number' && typeof oldVal === 'number';
+    const isBuff = num && newVal > oldVal;
+    const isNerf = num && newVal < oldVal;
+    const cls = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
+    const delta = num ? (isBuff ? `+${r2(newVal - oldVal)}` : `${r2(newVal - oldVal)}`) : '';
+    const oldValHtml = oldVal !== undefined ? oldVal : '?';
+    const newValHtml = newVal !== undefined ? newVal : '?';
+
     return `
       <div class="diff-chip ${cls}">
         <span class="diff-stat-name">${lbl}</span>
-        <span class="diff-old">${vals.old}${unit}</span>
+        <span class="diff-old">${oldValHtml}${unit}</span>
         <span class="diff-arrow">→</span>
-        <span class="diff-new ${cls}">${vals.new}${unit}</span>
+        <span class="diff-new ${cls}">${newValHtml}${unit}</span>
         ${delta ? `<span class="diff-delta ${cls}">(${delta})</span>` : ''}
       </div>`;
   }).join('');
@@ -471,7 +572,7 @@ function renderChangeCard(ch) {
         ${tier != null ? `<span class="tier-badge ${tc(tier)}">${tl(tier)}</span>` : ''}
         <div>
           <span class="change-weapon-name">${wname}</span>
-          <span class="change-family-tag">${ch.family} · ${vtag}</span>
+          <span class="change-family-tag">${family} · ${vtag}</span>
         </div>
       </div>
       <div class="change-diffs">${diffs}</div>
@@ -483,14 +584,14 @@ function renderChangeCard(ch) {
 //  STAT HISTORY MODAL
 // ================================================================
 function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
-  const key     = `${family}:${vtype}:${statKey}`;
+  const key = `${family}:${vtype}:${statKey}`;
   const history = allHistory[key] ?? [];
-  const def     = STAT_DEFS.find(s => s.key === statKey);
-  const unit    = def?.unit ?? '';
+  const def = STAT_DEFS.find(s => s.key === statKey);
+  const unit = def?.unit ?? '';
 
   // Current value from weapon data
-  const weapon  = (familyMap.get(family) ?? []).find(v => v.variantType === vtype);
-  const curVal  = weapon?.[statKey];
+  const weapon = (familyMap.get(family) ?? []).find(v => v.variantType === vtype);
+  const curVal = weapon?.[statKey];
 
   // Baseline = value before the first recorded change (or current if no history)
   const baseline = history.length ? history[0].old : curVal;
@@ -500,7 +601,7 @@ function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
   // Baseline row
   rows += `
     <div class="history-row">
-      <span class="h-patch">v1.0</span>
+      <a href="#patch-v1.0" class="h-patch-link" data-close-modal>v1.0</a>
       <span class="h-date">Изначально</span>
       <div class="h-change"><span class="h-value-only">${baseline}${unit}</span></div>
       <span class="h-tag-base">База</span>
@@ -508,17 +609,17 @@ function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
 
   // Each recorded change
   history.forEach((h, i) => {
-    const num    = typeof h.new === 'number' && typeof h.old === 'number';
+    const num = typeof h.new === 'number' && typeof h.old === 'number';
     const isBuff = num && h.new > h.old;
     const isNerf = num && h.new < h.old;
-    const dir    = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
+    const dir = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
     const rowCls = isBuff ? 'buff-row' : isNerf ? 'nerf-row' : '';
-    const delta  = num ? (isBuff ? `+${r2(h.new - h.old)}` : `${r2(h.new - h.old)}`) : '';
-    const isCur  = i === history.length - 1;
+    const delta = num ? (isBuff ? `+${r2(h.new - h.old)}` : `${r2(h.new - h.old)}`) : '';
+    const isCur = i === history.length - 1;
 
     rows += `
       <div class="history-row ${rowCls} ${isCur ? 'is-current' : ''}">
-        <span class="h-patch">${h.patch}</span>
+        <a href="#patch-${h.patch}" class="h-patch-link" data-close-modal>${h.patch}</a>
         <span class="h-date">${fmtDate(h.date)}</span>
         <div class="h-change">
           <span class="h-old">${h.old}${unit}</span>
@@ -542,9 +643,9 @@ function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
       <p class="history-no-changes">Изменений не зафиксировано</p>`;
   }
 
-  document.getElementById('modal-title').textContent    = `${statLabel} — история изменений`;
+  document.getElementById('modal-title').textContent = `${statLabel} — история изменений`;
   document.getElementById('modal-subtitle').textContent = weaponName;
-  document.getElementById('modal-body').innerHTML       = `<div class="history-list">${rows}</div>`;
+  document.getElementById('modal-body').innerHTML = `<div class="history-list">${rows}</div>`;
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
 
@@ -562,7 +663,7 @@ function changeIndicatorHtml(family, vtype, stat) {
   if (typeof ch.new !== 'number' || typeof ch.old !== 'number') return '';
   const dir = ch.new > ch.old ? 'up' : ch.new < ch.old ? 'down' : null;
   if (!dir) return '';
-  return `<span class="ci ${dir}" title="${ch.patch}: ${ch.old} → ${ch.new}">${dir === 'up' ? '▲' : '▼'}</span>`;
+  return `<span class="ci ${dir}" data-patch="${ch.patch}" title="${ch.patch}: ${ch.old} → ${ch.new}">${dir === 'up' ? '▲' : '▼'}</span>`;
 }
 
 /** Safe tier CSS class: t1..t6, or 'tx' for unknown */
