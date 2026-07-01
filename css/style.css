@@ -880,6 +880,11 @@ body {
   text-transform: none;
   letter-spacing: 0;
   line-height: 1.2;
+  text-decoration: none;
+  transition: color var(--ease);
+}
+.col-weapon-name:hover {
+  color: var(--accent);
 }
 .col-badges { display: flex; gap: 5px; flex-wrap: wrap; }
 .variant-tag {
@@ -1511,6 +1516,13 @@ a.h-patch-link:active {
   color: var(--text-2);
   border-bottom: 1px solid var(--border);
   padding-bottom: 8px;
+  text-decoration: none;
+  display: block;
+  transition: color var(--ease), border-color var(--ease);
+}
+.visual-variant-name:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
 }
 .visual-stats-list {
   display: flex;
@@ -1568,6 +1580,11 @@ a.h-patch-link:active {
   font-weight: 700;
   color: var(--text);
   text-align: center;
+  text-decoration: none;
+  transition: color var(--ease);
+}
+.compare-weapon-name:hover {
+  color: var(--accent);
 }
 .compare-remove-header-btn {
   background: none;
@@ -1590,6 +1607,74 @@ a.h-patch-link:active {
    UTILITY
    ================================================================ */
 .hidden { display: none !important; }
+
+/* ================================================================
+   WEAPON DETAIL INFO BLOCK
+   ================================================================ */
+.weapon-info-block {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 20px;
+}
+.weapon-image-container {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.weapon-image-container.placeholder {
+  flex-direction: column;
+  gap: 12px;
+  color: var(--text-3);
+  user-select: none;
+}
+.weapon-image-placeholder-icon {
+  font-size: 38px;
+  opacity: 0.35;
+}
+.weapon-image-placeholder-text {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.weapon-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s var(--ease);
+}
+.weapon-image:hover {
+  transform: scale(1.05);
+}
+.weapon-description-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.info-section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  color: var(--accent);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.weapon-description-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
 
 /* ================================================================
    RESPONSIVE
@@ -1806,6 +1891,15 @@ a.h-patch-link:active {
     font-size: 8px;
     padding: 1px 5px;
   }
+
+  .weapon-info-block {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+  .weapon-image-container {
+    height: 160px;
+  }
 }
 
 .table-scroll-hint {
@@ -1823,4 +1917,22 @@ a.h-patch-link:active {
   .table-scroll-hint {
     display: block;
   }
+}
+
+/* Active Highlight Styling for Individual Weapon Pages */
+.active-col-header {
+  background: rgba(225, 29, 72, 0.05) !important;
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+.active-col-cell {
+  background: rgba(225, 29, 72, 0.03) !important;
+}
+.stat-current {
+  font-weight: 700;
+  color: var(--text) !important;
+}
+.visual-variant-card.active-card {
+  border-color: var(--accent);
+  background: rgba(225, 29, 72, 0.03);
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.15);
 }

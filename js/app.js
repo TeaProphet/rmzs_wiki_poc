@@ -279,7 +279,12 @@ function handleRoute() {
   } else if (hash.startsWith('#family/')) {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
-    renderFamilyDetail(decodeURIComponent(hash.slice(8)));
+    const family = decodeURIComponent(hash.slice(8));
+    location.hash = `#weapon/${encodeURIComponent(family)}:base`;
+  } else if (hash.startsWith('#weapon/')) {
+    tabW.classList.add('active');
+    tabCL.classList.remove('active');
+    renderWeaponDetail(decodeURIComponent(hash.slice(8)));
   } else if (hash.startsWith('#compare')) {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
@@ -322,8 +327,8 @@ function toggleCompare(wkey) {
     } else {
       location.hash = `#compare?w=${compareList.join(',')}`;
     }
-  } else if (hash.startsWith('#family/')) {
-    renderFamilyDetail(decodeURIComponent(hash.slice(8)));
+  } else if (hash.startsWith('#weapon/')) {
+    renderWeaponDetail(decodeURIComponent(hash.slice(8)));
   }
 }
 
@@ -615,10 +620,13 @@ function setupEvents() {
       return;
     }
 
-    // Family card → navigate
-    const card = e.target.closest('.family-card[data-family]');
+    // Family card → navigate to individual weapon variant detail
+    const card = e.target.closest('.family-card[data-wkey]');
     if (card) {
-      location.hash = '#family/' + encodeURIComponent(card.dataset.family);
+      if (e.target.closest('.fav-card-badge') || e.target.closest('.compare-card-badge')) {
+        return;
+      }
+      location.hash = '#weapon/' + encodeURIComponent(card.dataset.wkey);
     }
   });
 
@@ -663,22 +671,22 @@ function setupEvents() {
     // Navigation with Left/Right Arrows in Detailed View
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       const hash = location.hash || '#weapons';
-      if (hash.startsWith('#family/')) {
+      if (hash.startsWith('#weapon/')) {
         const active = document.activeElement;
         if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
           return;
         }
-        const currentFamily = decodeURIComponent(hash.split('/')[1]);
-        const sortedFamilies = [...familyMap.keys()].sort();
-        const curIndex = sortedFamilies.indexOf(currentFamily);
+        const currentWKey = decodeURIComponent(hash.split('/')[1]);
+        const sortedWeaponsKeys = weaponsData.map(w => `${w.family}:${w.variantType}`).sort();
+        const curIndex = sortedWeaponsKeys.indexOf(currentWKey);
         if (curIndex !== -1) {
           e.preventDefault();
           if (e.key === 'ArrowLeft') {
-            const prevFam = sortedFamilies[(curIndex - 1 + sortedFamilies.length) % sortedFamilies.length];
-            location.hash = '#family/' + encodeURIComponent(prevFam);
+            const prevWKey = sortedWeaponsKeys[(curIndex - 1 + sortedWeaponsKeys.length) % sortedWeaponsKeys.length];
+            location.hash = '#weapon/' + encodeURIComponent(prevWKey);
           } else {
-            const nextFam = sortedFamilies[(curIndex + 1) % sortedFamilies.length];
-            location.hash = '#family/' + encodeURIComponent(nextFam);
+            const nextWKey = sortedWeaponsKeys[(curIndex + 1) % sortedWeaponsKeys.length];
+            location.hash = '#weapon/' + encodeURIComponent(nextWKey);
           }
         }
       }
@@ -688,7 +696,7 @@ function setupEvents() {
 
 function applySearch(value) {
   filters.search = value.trim().toLowerCase();
-  if (!location.hash.startsWith('#family/') && location.hash !== '#changelog') {
+  if (!location.hash.startsWith('#weapon/') && location.hash !== '#changelog') {
     renderWeapons();
   } else if (filters.search) {
     location.hash = '#weapons';
@@ -758,6 +766,26 @@ function renderWeapons() {
     }
     return true;
   });
+
+  // Sort:
+  if (filters.sortBy === 'default') {
+    filteredWeapons.sort((a, b) => {
+      return ((a.tier ?? 99) - (b.tier ?? 99)) ||
+        a.family.localeCompare(b.family) ||
+        (a.variantNum - b.variantNum);
+    });
+  } else {
+    const key = filters.sortBy;
+    const isAsc = filters.sortOrder === 'asc';
+    filteredWeapons.sort((a, b) => {
+      const valA = a[key] ?? (isAsc ? 999999 : -999999);
+      const valB = b[key] ?? (isAsc ? 999999 : -999999);
+      if (valA === valB) {
+        return a.family.localeCompare(b.family) || (a.variantNum - b.variantNum);
+      }
+      return isAsc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    });
+  }
 
   // Update DOM: check if the skeleton exists
   const hasSkeleton = document.querySelector('.filters-container') !== null;
@@ -1023,7 +1051,7 @@ function renderWeaponCard(w) {
   }).join('');
 
   return `
-    <div class="family-card ${tc(tier)}" data-family="${esc(family)}">
+    <div class="family-card ${tc(tier)}" data-wkey="${esc(family)}:${w.variantType}">
       <div class="card-header">
         <div class="card-top-bar">
           <div class="card-actions-left">
@@ -1056,24 +1084,26 @@ function renderWeaponCard(w) {
 // ================================================================
 //  VIEW: FAMILY DETAIL
 // ================================================================
-function renderFamilyDetail(family) {
-  const variants = familyMap.get(family);
-  if (!variants) { location.hash = '#weapons'; return; }
+function renderWeaponDetail(wkey) {
+  const [family, variantType] = wkey.split(':');
+  const variants = familyMap.get(family) || [];
+  if (variants.length === 0) { location.hash = '#weapons'; return; }
 
+  const currentWeapon = variants.find(v => v.variantType === variantType) || variants[0];
   const base = variants.find(v => v.variantType === 'base') || variants[0];
-  const tier = base.tier;
+  const tier = currentWeapon.tier;
 
-  // Filter patches that have changes for this family
-  const familyPatches = [];
+  // Filter patches that have changes for this specific weapon variant
+  const weaponPatches = [];
   const sortedPatches = [...changelogData].sort((a, b) => new Date(b.date) - new Date(a.date));
   for (const patch of sortedPatches) {
     if (!patch.changes?.length) continue;
     const matchingChanges = patch.changes.filter(ch => {
       const w = findWeaponForChange(ch);
-      return w && w.family === family;
+      return w && w.family === family && w.variantType === variantType;
     });
     if (matchingChanges.length > 0) {
-      familyPatches.push({
+      weaponPatches.push({
         ...patch,
         changes: matchingChanges
       });
@@ -1085,11 +1115,12 @@ function renderFamilyDetail(family) {
     const ammoClr = AMMO_COLORS[v.ammo] ?? '#888';
     const ammoLbl = AMMO_LABELS[v.ammo] ?? v.ammo;
     const isBase = v.variantType === 'base';
+    const isCurrent = v.variantType === variantType;
     const vtag = VARIANT_LABELS[v.variantType] ?? v.variantType;
     return `
-      <th>
+      <th class="${isCurrent ? 'active-col-header' : ''}">
         <div class="col-header">
-          <div class="col-weapon-name">${v.name}</div>
+          <a href="#weapon/${encodeURIComponent(v.family + ':' + v.variantType)}" class="col-weapon-name">${v.name}</a>
           <div class="col-badges">
             <span class="variant-tag ${isBase ? 'base' : 'branch'}">${vtag}</span>
             <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:9px">${ammoLbl}</span>
@@ -1129,8 +1160,13 @@ function renderFamilyDetail(family) {
         ? `data-stat="${s.key}" data-family="${esc(family)}" data-vtype="${v.variantType}" data-label="${s.label}" data-wname="${esc(v.name)}"`
         : '';
       const isBest = hasDiffs && bestVal !== null && getCompareValue(val, s.key) === bestVal;
-      const cellCls = isBest ? 'table-stat stat-best' : 'table-stat';
-      return `<td><div class="${cellCls}" ${attrs}>${valHtml}</div></td>`;
+      const isCurrent = v.variantType === variantType;
+      
+      let cellCls = 'table-stat';
+      if (isBest) cellCls += ' stat-best';
+      if (isCurrent) cellCls += ' stat-current';
+
+      return `<td class="${isCurrent ? 'active-col-cell' : ''}"><div class="${cellCls}" ${attrs}>${valHtml}</div></td>`;
     }).join('');
 
     let labelHtml = s.label;
@@ -1168,8 +1204,11 @@ function renderFamilyDetail(family) {
         ${variants.map(v => {
           const val = v.projectileCount || 1;
           const isBest = hasProjDiffs && val === maxProj;
-          const cellCls = isBest ? 'table-stat stat-best' : 'table-stat';
-          return `<td><div class="${cellCls}">${val}</div></td>`;
+          const isCurrent = v.variantType === variantType;
+          let cellCls = 'table-stat';
+          if (isBest) cellCls += ' stat-best';
+          if (isCurrent) cellCls += ' stat-current';
+          return `<td class="${isCurrent ? 'active-col-cell' : ''}"><div class="${cellCls}">${val}</div></td>`;
         }).join('')}
        </tr>`;
   }
@@ -1178,7 +1217,10 @@ function renderFamilyDetail(family) {
   const fileRow = `
     <tr>
       <td><div class="row-label">Файл</div></td>
-      ${variants.map(v => `<td><span class="file-name">${v.file}</span></td>`).join('')}
+      ${variants.map(v => {
+        const isCurrent = v.variantType === variantType;
+        return `<td class="${isCurrent ? 'active-col-cell' : ''}"><span class="file-name">${v.file}</span></td>`;
+      }).join('')}
     </tr>`;
 
   const patchTag = latestPatch
@@ -1190,43 +1232,75 @@ function renderFamilyDetail(family) {
   document.getElementById('app').innerHTML = `
     <a class="back-btn" href="#weapons">← К списку оружия</a>
     <div class="detail-title-row">
-      <span class="detail-title">${family}</span>
-      <span class="tier-badge ${tc(tier)}">Tier ${tl(tier)}</span>
+      <span class="detail-title">${currentWeapon.name}</span>
+      <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
       <button id="share-detail-btn" class="share-detail-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
         Поделиться
       </button>
     </div>
     <div class="detail-meta">
-      <span>${variants.length} ${pluralVariantFull(variants.length)}</span>
+      <span class="variant-tag ${currentWeapon.variantType === 'base' ? 'base' : 'branch'}">${VARIANT_LABELS[currentWeapon.variantType] ?? currentWeapon.variantType}</span>
       <span class="dot">·</span>
-      <span>${AMMO_LABELS[base.ammo] ?? base.ammo}</span>
+      <span>Семейство: <strong>${family}</strong></span>
+      <span class="dot">·</span>
+      <span>${AMMO_LABELS[currentWeapon.ammo] ?? currentWeapon.ammo}</span>
       ${patchTag ? `<span class="dot">·</span>${patchTag}` : ''}
     </div>
-    <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
-    <div class="table-wrapper">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Параметр</th>
-            ${colHeaders}
-          </tr>
-        </thead>
-        <tbody>
-          ${statRows}
-          ${projectileRow}
-          ${fileRow}
-        </tbody>
-      </table>
+    <div class="weapon-info-block">
+      ${currentWeapon.image ? `
+        <div class="weapon-image-container">
+          <img src="${currentWeapon.image}" alt="${esc(currentWeapon.name)}" class="weapon-image">
+        </div>
+      ` : `
+        <div class="weapon-image-container placeholder">
+          <div class="weapon-image-placeholder-icon">🔫</div>
+          <div class="weapon-image-placeholder-text">Изображение отсутствует</div>
+        </div>
+      `}
+      <div class="weapon-description-container">
+        <h4 class="info-section-title">Описание оружия</h4>
+        <p class="weapon-description-text">
+          ${currentWeapon.description ? currentWeapon.description : 'Для этого оружия пока нет подробного описания.'}
+        </p>
+      </div>
     </div>
-    ${variants.length > 1 ? renderStatsVisualization(variants) : ''}
+    
+    ${variants.length > 1 ? `
+      <div class="detail-branches-comparison-section" style="margin-top: 32px; margin-bottom: 32px;">
+        <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+          Сравнение с другими ветками
+        </h3>
+        <p style="color: var(--text-3); font-size: 12px; margin-bottom: 16px;">
+          Ниже приведено сравнение текущего оружия с другими модификациями этого семейства. Текущая ветка подсвечена.
+        </p>
+        <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
+        <div class="table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Параметр</th>
+                ${colHeaders}
+              </tr>
+            </thead>
+            <tbody>
+              ${statRows}
+              ${projectileRow}
+              ${fileRow}
+            </tbody>
+          </table>
+        </div>
+        ${renderStatsVisualization(variants, 'Визуальное сравнение веток', variantType)}
+      </div>
+    ` : ''}
+    
     <div class="detail-changelog-section" style="margin-top: 40px;">
       <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">
         История изменений оружия
       </h3>
-      ${familyPatches.length === 0
+      ${weaponPatches.length === 0
       ? `<p class="no-changes" style="font-style: italic; color: var(--text-3);">Изменений для этого оружия не зафиксировано.</p>`
-      : `<div class="changelog-wrap">${familyPatches.map(renderPatchCard).join('')}</div>`
+      : `<div class="changelog-wrap">${weaponPatches.map(renderPatchCard).join('')}</div>`
     }
     </div>`;
 }
@@ -1234,7 +1308,7 @@ function renderFamilyDetail(family) {
 // ================================================================
 //  STATS PROGRESS BARS VISUALIZATION
 // ================================================================
-function renderStatsVisualization(variants, title = 'Визуальное сравнение веток') {
+function renderStatsVisualization(variants, title = 'Визуальное сравнение веток', activeVariantType = null) {
   // Max values for normalization in progress bars
   const maxDamage = Math.max(...variants.map(v => v.damage || 0));
   const maxDps = Math.max(...variants.map(v => v.dps || 0));
@@ -1255,9 +1329,11 @@ function renderStatsVisualization(variants, title = 'Визуальное сра
     const rVal = v.reload != null ? parseFloat(String(v.reload).replace(',', '.')) : 0;
     const reloadPct = !isNaN(rVal) && maxReload ? (rVal / maxReload) * 100 : 0;
 
+    const isCurrent = activeVariantType && v.variantType === activeVariantType;
+
     return `
-      <div class="visual-variant-card">
-        <div class="visual-variant-name">${v.name}</div>
+      <div class="visual-variant-card ${isCurrent ? 'active-card' : ''}">
+        <a href="#weapon/${encodeURIComponent(v.family + ':' + v.variantType)}" class="visual-variant-name">${v.name}</a>
         <div class="visual-stats-list">
           <div class="visual-stat-row">
             <div class="visual-label">Урон: <strong>${v.damage ?? '—'}</strong></div>
@@ -1335,9 +1411,9 @@ function renderComparePage() {
     return `
       <th>
         <div class="compare-header-cell">
-          <span class="compare-weapon-name">${w.name}</span>
+          <a href="#weapon/${encodeURIComponent(w.family + ':' + w.variantType)}" class="compare-weapon-name">${w.name}</a>
           <div style="margin-top: 4px; display: flex; gap: 6px; justify-content: center; align-items: center;">
-            <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">Tier ${tl(w.tier)}</span>
+            <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">${tl(w.tier)}</span>
             <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:8px;padding:1px 4px;">${ammoLbl}</span>
           </div>
           <button class="compare-remove-header-btn" data-wkey="${esc(w.family)}:${w.variantType}">Убрать</button>
