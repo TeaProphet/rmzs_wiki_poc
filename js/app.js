@@ -866,7 +866,7 @@ function renderFamilyDetail(family) {
 // ================================================================
 //  STATS PROGRESS BARS VISUALIZATION
 // ================================================================
-function renderStatsVisualization(variants) {
+function renderStatsVisualization(variants, title = 'Визуальное сравнение веток') {
   // Max values for normalization in progress bars
   const maxDamage = Math.max(...variants.map(v => v.damage || 0));
   const maxDps = Math.max(...variants.map(v => v.dps || 0));
@@ -918,7 +918,7 @@ function renderStatsVisualization(variants) {
 
   return `
     <div class="stats-visualization-section">
-      <h3 class="section-title">Визуальное сравнение веток</h3>
+      <h3 class="section-title">${title}</h3>
       <div class="visual-charts-grid">
         ${cardsHtml}
       </div>
@@ -1032,6 +1032,7 @@ function renderComparePage() {
         </tbody>
       </table>
     </div>
+    ${renderStatsVisualization(selectedWeapons, 'Визуальное сравнение оружия')}
   `;
 }
 
