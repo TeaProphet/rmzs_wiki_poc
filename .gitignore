@@ -1,0 +1,11 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Raw source files (не нужны на сайте)
+*.xlsx
+*.csv
+
+# OS
+.DS_Store
+Thumbs.db

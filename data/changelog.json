@@ -1,0 +1,99 @@
+[
+  {
+    "patch": "v1.2",
+    "date": "2026-07-20",
+    "description": "Ребаланс Tier 1–3. Усиление химического пистолета, ослабление Oberon и Crackler.",
+    "changes": [
+      {
+        "family": "Toxic",
+        "variantType": "base",
+        "weaponName": "'Toxic' Chemical pistol",
+        "stats": {
+          "damage":  { "old": 20,  "new": 23  },
+          "dps":     { "old": 58,  "new": 66  }
+        },
+        "note": "Слабо показывал себя против быстрых зомби на дистанции"
+      },
+      {
+        "family": "Oberon",
+        "variantType": "branch_1",
+        "weaponName": "'Oberon' Pulse Shotgun (Ветка 1)",
+        "stats": {
+          "damage":  { "old": 80,  "new": 60  },
+          "dps":     { "old": 500, "new": 375 }
+        },
+        "note": "Слишком высокий DPS для Tier 3"
+      },
+      {
+        "family": "Crackler",
+        "variantType": "base",
+        "weaponName": "'Crackler' Assault Rifle",
+        "stats": {
+          "clipSize": { "old": 25, "new": 21 }
+        }
+      },
+      {
+        "family": "Amigo",
+        "variantType": "branch_2",
+        "weaponName": "'Horizon' Assault Rifle",
+        "stats": {
+          "damage": { "old": 18,   "new": 20   },
+          "delay":  { "old": 0.65, "new": 0.75 }
+        },
+        "note": "Компенсация за уменьшение базового урона в v1.1"
+      }
+    ]
+  },
+  {
+    "patch": "v1.1",
+    "date": "2026-07-08",
+    "description": "Первый балансировочный патч. Ребаланс пистолетов Tier 1–2, усиление штыка.",
+    "changes": [
+      {
+        "family": "Simon",
+        "variantType": "base",
+        "weaponName": "'Simon' Revolver",
+        "stats": {
+          "damage": { "old": 42,  "new": 38  },
+          "dps":    { "old": 168, "new": 152 }
+        },
+        "note": "Слишком высокая эффективность на старте раунда"
+      },
+      {
+        "family": "Bayonet",
+        "variantType": "base",
+        "weaponName": "'Bayonet' M1 Garand",
+        "stats": {
+          "damage": { "old": 55,  "new": 60  },
+          "dps":    { "old": 122, "new": 133 }
+        }
+      },
+      {
+        "family": "Amigo",
+        "variantType": "branch_1",
+        "weaponName": "'Comrade' Assault Rifle",
+        "stats": {
+          "damage": { "old": 18, "new": 16 },
+          "dps":    { "old": 138, "new": 123 }
+        },
+        "note": "Comrade был стабильнее базового Amigo без компромисса"
+      },
+      {
+        "family": "Owens",
+        "variantType": "base",
+        "weaponName": "'Owens' Handgun",
+        "stats": {
+          "clipSize": { "old": 10, "new": 12 },
+          "reload":   { "old": 3.0, "new": 2.6 }
+        },
+        "note": "QoL улучшение — оружие не менялось с запуска сервера"
+      }
+    ]
+  },
+  {
+    "patch": "v1.0",
+    "date": "2026-07-01",
+    "description": "Первоначальная публикация базы данных. Все показатели актуальны на дату выпуска.",
+    "changes": []
+  }
+]
