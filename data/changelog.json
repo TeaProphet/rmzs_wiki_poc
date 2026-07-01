@@ -1,15 +1,188 @@
 [
   {
+    "patch": "v2.0",
+    "date": "2026-09-09",
+    "description": "Крупное обновление v2.0. Финальные штрихи баланса перед осенним сезоном.",
+    "changes": [
+      {
+        "file": "weapon_zs_chempistol",
+        "stats": {
+          "delay": 0.30
+        },
+        "note": "Уменьшена задержка выстрела для повышения отзывчивости стрельбы"
+      },
+      {
+        "file": "weapon_zs_juggernaut",
+        "stats": {
+          "damage": 30
+        },
+        "note": "Увеличен базовый урон пулемета Juggernaut"
+      }
+    ]
+  },
+  {
+    "patch": "v1.9",
+    "date": "2026-09-02",
+    "description": "Обновление v1.9. Корректировка пистолетов и легкого оружия.",
+    "changes": [
+      {
+        "file": "weapon_zs_owens",
+        "stats": {
+          "damage": 16
+        },
+        "note": "Незначительный подъем урона"
+      },
+      {
+        "file": "weapon_zs_blaster",
+        "stats": {
+          "delay": 0.32
+        }
+      }
+    ]
+  },
+  {
+    "patch": "v1.8",
+    "date": "2026-08-26",
+    "description": "Обновление v1.8. Повторная балансировка химического оружия.",
+    "changes": [
+      {
+        "file": "weapon_zs_chempistol",
+        "stats": {
+          "damage": 30
+        },
+        "note": "Существенный бафф урона химического пистолета"
+      },
+      {
+        "file": "weapon_zs_oberon",
+        "variantType": "branch_1",
+        "stats": {
+          "dps": 350
+        }
+      }
+    ]
+  },
+  {
+    "patch": "v1.7",
+    "date": "2026-08-19",
+    "description": "Обновление v1.7. Правки холодного и колющего оружия.",
+    "changes": [
+      {
+        "file": "weapon_zs_mr96",
+        "stats": {
+          "dps": 160
+        }
+      },
+      {
+        "file": "weapon_zs_stabber",
+        "variantType": "branch_1",
+        "stats": {
+          "damage": 250,
+          "dps": 200
+        },
+        "note": "Ослабление ветки штыка в связи с высокой эффективностью"
+      }
+    ]
+  },
+  {
+    "patch": "v1.6",
+    "date": "2026-08-12",
+    "description": "Обновление v1.6. Корректировка тяжелого вооружения и дробовиков.",
+    "changes": [
+      {
+        "file": "weapon_zs_juggernaut",
+        "stats": {
+          "damage": 28,
+          "dps": 311
+        }
+      },
+      {
+        "file": "weapon_zs_blaster",
+        "stats": {
+          "damage": 8.0,
+          "delay": 0.35
+        },
+        "note": "Очередной ребаланс характеристик дробовика Blaster"
+      }
+    ]
+  },
+  {
+    "patch": "v1.5",
+    "date": "2026-08-05",
+    "description": "Обновление v1.5. Увеличение боезапаса пистолетов.",
+    "changes": [
+      {
+        "file": "weapon_zs_chempistol",
+        "stats": {
+          "clipSize": 20
+        },
+        "note": "Увеличен размер магазина химического пистолета"
+      },
+      {
+        "file": "weapon_zs_owens",
+        "stats": {
+          "reload": 2.0
+        }
+      }
+    ]
+  },
+  {
+    "patch": "v1.4",
+    "date": "2026-07-29",
+    "description": "Обновление v1.4. Балансировка автоматических винтовок.",
+    "changes": [
+      {
+        "file": "weapon_zs_amigo",
+        "variantType": "branch_2",
+        "stats": {
+          "damage": 20,
+          "delay": 0.75
+        },
+        "note": "Правки характеристик Horizon"
+      },
+      {
+        "file": "weapon_zs_oberon",
+        "variantType": "branch_1",
+        "stats": {
+          "damage": 60,
+          "dps": 375
+        },
+        "note": "Слишком высокая скорость стрельбы Oberon"
+      }
+    ]
+  },
+  {
+    "patch": "v1.3",
+    "date": "2026-07-22",
+    "description": "Обновление v1.3. Переработка револьверов и штыков.",
+    "changes": [
+      {
+        "file": "weapon_zs_mr96",
+        "stats": {
+          "damage": 38,
+          "dps": 152
+        },
+        "note": "Ребаланс Simon Revolver"
+      },
+      {
+        "file": "weapon_zs_stabber",
+        "variantType": "base",
+        "stats": {
+          "damage": 60,
+          "dps": 133
+        }
+      }
+    ]
+  },
+  {
     "patch": "v1.2",
-    "date": "2026-07-20",
-    "description": "Тестовое обновление v1.2. Вторая волна ребаланса оружия.",
+    "date": "2026-07-15",
+    "description": "Обновление v1.2. Правки пистолета Owens и дробовиков.",
     "changes": [
       {
         "file": "weapon_zs_chempistol",
         "stats": {
           "damage": 28
-        },
-        "note": "Усиление химического пистолета для более поздних стадий игры"
+        }
       },
       {
         "file": "weapon_zs_owens",
@@ -18,13 +191,20 @@
           "reload": 2.2
         },
         "note": "Повышение эффективности пистолета Owens"
+      },
+      {
+        "file": "weapon_zs_crackler",
+        "variantType": "base",
+        "stats": {
+          "clipSize": 20
+        }
       }
     ]
   },
   {
     "patch": "v1.1",
     "date": "2026-07-08",
-    "description": "Тестовое обновление v1.1. Базовые корректировки баланса.",
+    "description": "Обновление v1.1. Базовые корректировки баланса пистолетов.",
     "changes": [
       {
         "file": "weapon_zs_chempistol",
@@ -40,6 +220,15 @@
           "damage": 7.5
         },
         "note": "Округление урона дробовика Blaster в большую сторону"
+      },
+      {
+        "file": "weapon_zs_amigo",
+        "variantType": "branch_1",
+        "stats": {
+          "damage": 16,
+          "dps": 123
+        },
+        "note": "Изменения характеристик Comrade"
       }
     ]
   },
