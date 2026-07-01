@@ -622,8 +622,8 @@ function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
   // Each recorded change
   history.forEach((h, i) => {
     const num = typeof h.new === 'number' && typeof h.old === 'number';
-    const isBuff = checkIsBuff(stat, h.new, h.old);
-    const isNerf = checkIsNerf(stat, h.new, h.old);
+    const isBuff = checkIsBuff(statKey, h.new, h.old);
+    const isNerf = checkIsNerf(statKey, h.new, h.old);
     const dir = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
     const rowCls = isBuff ? 'buff-row' : isNerf ? 'nerf-row' : '';
     const deltaVal = num ? (h.new - h.old) : 0;
