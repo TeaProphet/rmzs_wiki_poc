@@ -351,7 +351,10 @@ function updateCompareWidget() {
   
   widget.classList.remove('hidden');
   widget.innerHTML = `
-    <div class="compare-widget-title">⚖ Сравнение (${compareList.length}/5)</div>
+    <div class="compare-widget-title">
+      <span>⚖ Сравнение (${compareList.length}/5)</span>
+      <button id="compare-widget-clear-btn" class="compare-widget-clear-btn" title="Сбросить всё">Сбросить</button>
+    </div>
     <div class="compare-widget-items">
       ${compareList.map(key => {
         const [fam, vtype] = key.split(':');
@@ -376,6 +379,11 @@ function goCompare() {
     return;
   }
   location.hash = `#compare?w=${compareList.join(',')}`;
+}
+
+function removeCompare() {
+  compareList = [];
+  updateCompareWidget();
 }
 
 function openHelpModal() {
@@ -573,6 +581,14 @@ function setupEvents() {
     if (resetFiltersBtn) {
       e.stopPropagation();
       resetFilters();
+      return;
+    }
+
+    // 4. Reset compare button
+    const resetCompareBtn = e.target.closest('#compare-widget-clear-btn');
+    if (resetCompareBtn) {
+      e.stopPropagation();
+      removeCompare();
       return;
     }
 

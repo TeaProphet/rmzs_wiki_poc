@@ -1429,6 +1429,22 @@ a.h-patch-link:active {
   color: var(--accent);
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.compare-widget-clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 11px;
+  transition: color var(--ease);
+  line-height: 1;
+}
+.compare-widget-clear-btn:hover {
+  color: #ef4444;
 }
 .compare-widget-items {
   display: flex;
