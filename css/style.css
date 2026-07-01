@@ -420,8 +420,8 @@ body {
   cursor: pointer;
   transition: transform var(--ease), box-shadow var(--ease);
 }
-.ci.up   { color: var(--buff); background: var(--buff-bg); }
-.ci.down { color: var(--nerf); background: var(--nerf-bg); }
+.ci.buff { color: var(--buff); background: var(--buff-bg); }
+.ci.nerf { color: var(--nerf); background: var(--nerf-bg); }
 .ci:hover {
   transform: translateY(-1px) scale(1.15);
   box-shadow: 0 0 6px rgba(240, 160, 16, 0.35);

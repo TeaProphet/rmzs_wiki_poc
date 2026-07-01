@@ -341,6 +341,9 @@ function renderWeaponCard(w) {
   const variants = familyMap.get(family) || [];
   const varCount = variants.length - 1;
 
+  const baseW = variants.find(v => v.variantType === 'base') || w;
+  const baseMainName = parseWeaponName(baseW.name);
+
   const statsHtml = STAT_DEFS.map(s => {
     const val = w[s.key];
     const ci = changeIndicatorHtml(family, w.variantType, s.key);
@@ -363,7 +366,7 @@ function renderWeaponCard(w) {
       <div class="card-header">
         <div class="card-header-info">
           <div class="family-name">${w.name}</div>
-          <div class="base-weapon-name">${family} · ${vtag}</div>
+          <div class="base-weapon-name">${baseMainName} · ${vtag}</div>
         </div>
         <div class="card-badges">
           <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
@@ -539,6 +542,10 @@ function renderChangeCard(ch, patchVersion) {
   const vtag = VARIANT_LABELS[variantType] ?? variantType;
   const baseKey = `${family}:${variantType}`;
 
+  const variants = familyMap.get(family) || [];
+  const baseW = variants.find(v => v.variantType === 'base') || weapon;
+  const baseMainName = parseWeaponName(baseW.name);
+
   const diffs = Object.entries(ch.stats).map(([stat, val]) => {
     const def = STAT_DEFS.find(s => s.key === stat);
     const lbl = def?.label ?? stat;
@@ -553,10 +560,11 @@ function renderChangeCard(ch, patchVersion) {
     const newVal = entry.new;
 
     const num = typeof newVal === 'number' && typeof oldVal === 'number';
-    const isBuff = num && newVal > oldVal;
-    const isNerf = num && newVal < oldVal;
+    const isBuff = checkIsBuff(stat, newVal, oldVal);
+    const isNerf = checkIsNerf(stat, newVal, oldVal);
     const cls = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
-    const delta = num ? (isBuff ? `+${r2(newVal - oldVal)}` : `${r2(newVal - oldVal)}`) : '';
+    const deltaVal = num ? (newVal - oldVal) : 0;
+    const delta = num ? (deltaVal > 0 ? `+${r2(deltaVal)}` : `${r2(deltaVal)}`) : '';
     const oldValHtml = oldVal !== undefined ? oldVal : '?';
     const newValHtml = newVal !== undefined ? newVal : '?';
 
@@ -576,7 +584,7 @@ function renderChangeCard(ch, patchVersion) {
         ${tier != null ? `<span class="tier-badge ${tc(tier)}">${tl(tier)}</span>` : ''}
         <div>
           <span class="change-weapon-name">${wname}</span>
-          <span class="change-family-tag">${family} · ${vtag}</span>
+          <span class="change-family-tag">${baseMainName} · ${vtag}</span>
         </div>
       </div>
       <div class="change-diffs">${diffs}</div>
@@ -614,11 +622,12 @@ function openStatHistory(family, vtype, statKey, statLabel, weaponName) {
   // Each recorded change
   history.forEach((h, i) => {
     const num = typeof h.new === 'number' && typeof h.old === 'number';
-    const isBuff = num && h.new > h.old;
-    const isNerf = num && h.new < h.old;
+    const isBuff = checkIsBuff(stat, h.new, h.old);
+    const isNerf = checkIsNerf(stat, h.new, h.old);
     const dir = isBuff ? 'buff' : isNerf ? 'nerf' : 'neutral';
     const rowCls = isBuff ? 'buff-row' : isNerf ? 'nerf-row' : '';
-    const delta = num ? (isBuff ? `+${r2(h.new - h.old)}` : `${r2(h.new - h.old)}`) : '';
+    const deltaVal = num ? (h.new - h.old) : 0;
+    const delta = num ? (deltaVal > 0 ? `+${r2(deltaVal)}` : `${r2(deltaVal)}`) : '';
     const isCur = i === history.length - 1;
 
     rows += `
@@ -665,9 +674,12 @@ function changeIndicatorHtml(family, vtype, stat) {
   const ch = latestChange[`${family}:${vtype}:${stat}`];
   if (!ch || !latestPatch || ch.patch !== latestPatch.patch) return '';
   if (typeof ch.new !== 'number' || typeof ch.old !== 'number') return '';
-  const dir = ch.new > ch.old ? 'up' : ch.new < ch.old ? 'down' : null;
-  if (!dir) return '';
-  return `<span class="ci ${dir}" data-patch="${ch.patch}" title="${ch.patch}: ${ch.old} → ${ch.new}">${dir === 'up' ? '▲' : '▼'}</span>`;
+  const isBuff = checkIsBuff(stat, ch.new, ch.old);
+  const isNerf = checkIsNerf(stat, ch.new, ch.old);
+  if (!isBuff && !isNerf) return '';
+  const cls = isBuff ? 'buff' : 'nerf';
+  const arrow = ch.new > ch.old ? '▲' : '▼';
+  return `<span class="ci ${cls}" data-patch="${ch.patch}" title="${ch.patch}: ${ch.old} → ${ch.new}">${arrow}</span>`;
 }
 
 /** Safe tier CSS class: t1..t6, or 'tx' for unknown */
@@ -682,6 +694,29 @@ function fmtDate(str) {
 }
 
 function r2(n) { return Math.round(n * 100) / 100; }
+
+function parseWeaponName(fullName) {
+  const m = fullName.match(/^['"’](.*?)['"’]\s*(.*)$/);
+  return m ? m[2].trim() : fullName;
+}
+
+function checkIsBuff(stat, newVal, oldVal) {
+  if (typeof newVal !== 'number' || typeof oldVal !== 'number') return false;
+  if (newVal === oldVal) return false;
+  if (stat === 'delay' || stat === 'reload') {
+    return newVal < oldVal; // Lower is better
+  }
+  return newVal > oldVal; // Higher is better
+}
+
+function checkIsNerf(stat, newVal, oldVal) {
+  if (typeof newVal !== 'number' || typeof oldVal !== 'number') return false;
+  if (newVal === oldVal) return false;
+  if (stat === 'delay' || stat === 'reload') {
+    return newVal > oldVal; // Higher is worse
+  }
+  return newVal < oldVal; // Lower is worse
+}
 
 /** Escape for use inside HTML attribute values */
 function esc(str) {
