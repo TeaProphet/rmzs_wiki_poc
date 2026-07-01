@@ -471,11 +471,17 @@ function renderWeaponCard(w) {
       </div>
       <div class="card-divider"></div>
       <div class="card-stats">${statsHtml}</div>
+      ${w.projectileCount && w.projectileCount > 1 ? `
+        <div class="card-projectile-count">
+          <span>Кол-во снарядов за выстрел</span>
+          <strong>${w.projectileCount}</strong>
+        </div>
+      ` : ''}
       <div class="card-footer">
         <span class="variants-label">
           ${varCount > 0
-      ? `Веток: <strong>${variants.length}</strong>`
-      : 'Веток: 1'}
+            ? `Веток: <strong>${variants.length}</strong>`
+            : 'Веток: 1'}
         </span>
         <span class="card-arrow">Подробнее →</span>
       </div>
@@ -544,6 +550,15 @@ function renderFamilyDetail(family) {
     return `<tr><td><div class="row-label">${s.label}</div></td>${cells}</tr>`;
   }).join('');
 
+  // Projectile count row (only if at least one variant has projectileCount > 1)
+  const hasMultipleProjectiles = variants.some(v => v.projectileCount && v.projectileCount > 1);
+  const projectileRow = hasMultipleProjectiles
+    ? `<tr>
+        <td><div class="row-label">Кол-во снарядов за выстрел</div></td>
+        ${variants.map(v => `<td><div class="table-stat">${v.projectileCount || 1}</div></td>`).join('')}
+       </tr>`
+    : '';
+
   // File row
   const fileRow = `
     <tr>
@@ -579,6 +594,7 @@ function renderFamilyDetail(family) {
         </thead>
         <tbody>
           ${statRows}
+          ${projectileRow}
           ${fileRow}
         </tbody>
       </table>

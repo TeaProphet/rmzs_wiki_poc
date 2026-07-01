@@ -453,6 +453,25 @@ body {
 }
 .family-card:hover .card-arrow { color: var(--accent); transform: translateX(3px); }
 
+.card-projectile-count {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-3);
+  padding: 0 16px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-projectile-count strong {
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 1px 6px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--accent-dim);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+}
+
 /* ================================================================
    FAMILY DETAIL
    ================================================================ */
