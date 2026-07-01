@@ -52,7 +52,10 @@
 
 /* ===== RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
 
 body {
   visibility: visible;
@@ -134,6 +137,30 @@ body {
 }
 .nav-tab:hover { color: var(--text); background: var(--bg-3); border-color: var(--border); }
 .nav-tab.active { color: var(--accent); background: var(--accent-glow); border-color: var(--accent-dim); }
+
+.help-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all var(--ease);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.help-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-glow);
+}
 
 /* Search */
 .header-search {
@@ -1003,6 +1030,220 @@ a.h-patch-link:active {
 }
 .row-label .info-tooltip-trigger:hover .info-tooltip-content {
   transform: translateY(0);
+}
+
+/* Stat comparison highlighting */
+.table-stat.stat-best {
+  color: var(--buff) !important;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.2);
+}
+
+/* Compare card badge */
+.compare-card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 11px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  transition: all var(--ease);
+  margin-right: 4px;
+}
+.compare-card-badge:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-glow);
+}
+.compare-card-badge.active {
+  color: #fff;
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(240, 46, 170, 0.4);
+}
+
+/* Floating compare widget */
+.compare-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(28, 28, 36, 0.95);
+  border: 1px solid var(--border-2);
+  box-shadow: var(--shadow);
+  border-radius: var(--r-xl);
+  padding: 16px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 240px;
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+}
+.compare-widget-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.compare-widget-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.compare-widget-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-body);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 6px 10px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+.compare-widget-item button {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color var(--ease);
+}
+.compare-widget-item button:hover {
+  color: var(--nerf);
+}
+.compare-widget-go-btn {
+  background: var(--accent);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: var(--r-md);
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 0 0 10px rgba(240, 46, 170, 0.25);
+  transition: background var(--ease), box-shadow var(--ease);
+}
+.compare-widget-go-btn:hover {
+  background: #e0249c;
+  box-shadow: 0 0 15px rgba(240, 46, 170, 0.4);
+}
+
+/* Stats progress bars visualization */
+.stats-visualization-section {
+  margin-top: 40px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 24px;
+}
+.stats-visualization-section .section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.visual-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.visual-variant-card {
+  background: var(--bg-body);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.visual-variant-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.visual-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.visual-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.visual-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.visual-label strong {
+  color: var(--text);
+}
+.visual-bar-bg {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.visual-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s var(--ease);
+}
+
+/* Compare page layout elements */
+.compare-header-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.compare-weapon-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+.compare-remove-header-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all var(--ease);
+}
+.compare-remove-header-btn:hover {
+  color: var(--nerf);
+  border-color: var(--nerf);
+  background: rgba(239, 68, 68, 0.05);
 }
 
 /* ================================================================

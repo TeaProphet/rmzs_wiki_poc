@@ -58,6 +58,7 @@ let familyMap = new Map();   // family → sorted variants[]
 let allHistory = {};          // "family:vtype:stat" → [{patch,date,old,new}, …]
 let latestChange = {};          // "family:vtype:stat" → {patch,date,old,new}  (most recent patch that touched it)
 let latestPatch = null;        // the changelog entry with the most recent date
+let compareList = [];         // selected weapon families for side-by-side comparison
 
 const filters = { search: '', tier: 'all', ammo: 'all', sortBy: 'default', sortOrder: 'asc' };
 
@@ -211,7 +212,7 @@ function handleRoute() {
       setTimeout(() => {
         const targetEl = document.getElementById(patchId);
         if (targetEl) {
-          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
           targetEl.classList.add('highlight-flash');
           setTimeout(() => targetEl.classList.remove('highlight-flash'), 2000);
         }
@@ -221,11 +222,115 @@ function handleRoute() {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
     renderFamilyDetail(decodeURIComponent(hash.slice(8)));
+  } else if (hash === '#compare') {
+    tabW.classList.add('active');
+    tabCL.classList.remove('active');
+    renderComparePage();
   } else {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
     renderWeapons();
   }
+}
+
+// ================================================================
+//  COMPARE MODE
+// ================================================================
+function toggleCompare(wkey) {
+  const idx = compareList.indexOf(wkey);
+  if (idx > -1) {
+    compareList.splice(idx, 1);
+  } else {
+    if (compareList.length >= 5) {
+      alert("Можно сравнивать не более 5 видов оружия одновременно!");
+      return;
+    }
+    compareList.push(wkey);
+  }
+  updateCompareWidget();
+  
+  // Re-render based on current route to reflect compare badges
+  const hash = location.hash || '#weapons';
+  if (hash === '#weapons') {
+    renderWeapons();
+  } else if (hash === '#compare') {
+    renderComparePage();
+  } else if (hash.startsWith('#family/')) {
+    renderFamilyDetail(decodeURIComponent(hash.slice(8)));
+  }
+}
+
+function updateCompareWidget() {
+  const widget = document.getElementById('compare-widget');
+  if (!widget) return;
+  
+  if (compareList.length === 0) {
+    widget.classList.add('hidden');
+    return;
+  }
+  
+  widget.classList.remove('hidden');
+  widget.innerHTML = `
+    <div class="compare-widget-title">⚖ Сравнение (${compareList.length}/5)</div>
+    <div class="compare-widget-items">
+      ${compareList.map(key => {
+        const [fam, vtype] = key.split(':');
+        const variants = familyMap.get(fam) || [];
+        const w = variants.find(v => v.variantType === vtype) || {};
+        const name = w.name || fam;
+        return `
+          <div class="compare-widget-item">
+            <span style="font-weight:600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 170px;">${name}</span>
+            <button onclick="toggleCompare('${esc(key)}')">×</button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <button onclick="goCompare()" class="compare-widget-go-btn" style="border:none; cursor:pointer; width:100%; display:block;">Сравнить</button>
+  `;
+}
+
+function goCompare() {
+  if (compareList.length < 2) {
+    alert("Выберите как минимум 2 оружия для сравнения!");
+    return;
+  }
+  location.hash = '#compare';
+}
+
+function openHelpModal() {
+  const body = `
+    <div class="help-content" style="display: flex; flex-direction: column; gap: 20px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.6; color: var(--text-2);">
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">🔍 Поиск, сортировка и фильтры</h4>
+        <p>Вы можете искать оружие по названию или по имени lua-файла. Доступны фильтры по <strong>тирам (T1-T6)</strong> и <strong>типам патронов</strong>.</p>
+        <p>Клик по кнопке сортировки (Урон, DPS, Задержка, Перезарядка) упорядочит список. Повторный клик по тому же критерию изменит направление сортировки (по возрастанию / убыванию), что отмечается стрелкой на кнопке.</p>
+      </div>
+      
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">⚖ Сравнение оружия</h4>
+        <p>Иконка весов <strong>⚖</strong> на карточке оружия добавляет его в список сравнения (до <strong>5 единиц одновременно</strong>). В виджете в углу нажмите кнопку <strong>«Сравнить»</strong> для перехода к детальной таблице.</p>
+        <p>В таблице лучшие характеристики подсвечиваются зелёным цветом, а под таблицей выводится блок с наглядными прогресс-барами для быстрой оценки параметров веток.</p>
+      </div>
+
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">📈 История изменений и индикаторы патчей</h4>
+        <p>Клик по любой числовой характеристике откроет окно с полной историей её изменений. Рядом с изменёнными параметрами выводятся цветные стрелки: <span style="color: var(--buff);">▲ (бафф)</span> и <span style="color: var(--nerf);">▼ (нерф)</span>.</p>
+        <p><strong>Клик по стрелке</strong> перенесёт вас во вкладку <strong>Changelog</strong> к конкретному патчу, в котором это изменение было выпущено. Патч автоматически прокрутится на экран и подсветится кратковременной вспышкой.</p>
+      </div>
+
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">🔗 Умная навигация и закладки</h4>
+        <p>Все переходы внутри Wiki (просмотр карточек, вкладка изменений, окно сравнения и даже ссылки на конкретные патчи) отображаются в URL-адресе в виде хешей (например, <code>#compare</code>, <code>#family/Scattershot</code>, <code>#patch-v1.2</code>).</p>
+        <p>Вы можете свободно копировать адресную строку, делиться ссылками с другими или сохранять их в закладки — Wiki откроется ровно в том состоянии, на котором вы её оставили.</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modal-title').textContent = `Справка по использованию Wiki`;
+  document.getElementById('modal-subtitle').textContent = `Подробное руководство`;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal-overlay').classList.remove('hidden');
 }
 
 // ================================================================
@@ -243,6 +348,9 @@ function setupEvents() {
       location.hash = '#weapons';   // navigate back; hashchange will renderWeapons()
     }
   });
+
+  // Help button
+  document.getElementById('help-btn').addEventListener('click', openHelpModal);
 
   // Global delegation
   document.addEventListener('click', e => {
@@ -288,6 +396,15 @@ function setupEvents() {
         statEl.dataset.label,
         statEl.dataset.wname,
       );
+      return;
+    }
+
+    // Compare badge click
+    const compBadge = e.target.closest('.compare-card-badge');
+    if (compBadge) {
+      e.stopPropagation();
+      e.preventDefault();
+      toggleCompare(compBadge.dataset.wkey);
       return;
     }
 
@@ -461,7 +578,7 @@ function renderWeaponCard(w) {
             <span class="info-tooltip-content">
               <span class="tooltip-title">Формула:</span>
               <span class="formula-fraction">
-                <span class="fraction-numerator">Урон × Снаряды</span>
+                <span class="fraction-numerator">Урон × Снарядов за выстрел</span>
                 <span class="fraction-denominator">Задержка</span>
               </span>
             </span>
@@ -485,6 +602,7 @@ function renderWeaponCard(w) {
           <div class="base-weapon-name">${baseMainName} · ${vtag}</div>
         </div>
         <div class="card-badges">
+          <span class="compare-card-badge ${compareList.includes(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="Сравнить оружие">⚖</span>
           <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
           <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12">${ammoLbl}</span>
         </div>
@@ -547,8 +665,26 @@ function renderFamilyDetail(family) {
       </th>`;
   }).join('');
 
+  // Helper to parse values for best-value highlighting
+  const getCompareValue = (val, key) => {
+    if (val == null) return null;
+    if (typeof val === 'number') return val;
+    const str = String(val).replace(',', '.');
+    const num = parseFloat(str);
+    return isNaN(num) ? null : num;
+  };
+
   // Stat rows
   const statRows = STAT_DEFS.map(s => {
+    const isMinBest = (s.key === 'delay' || s.key === 'reload');
+    const compValues = variants
+      .map(v => getCompareValue(v[s.key], s.key))
+      .filter(x => x !== null);
+    const bestVal = compValues.length > 0
+      ? (isMinBest ? Math.min(...compValues) : Math.max(...compValues))
+      : null;
+    const hasDiffs = compValues.length > 1 && new Set(compValues).size > 1;
+
     const cells = variants.map(v => {
       const val = v[s.key];
       const hasHist = !!allHistory[`${family}:${v.variantType}:${s.key}`];
@@ -559,7 +695,9 @@ function renderFamilyDetail(family) {
       const attrs = hasHist
         ? `data-stat="${s.key}" data-family="${esc(family)}" data-vtype="${v.variantType}" data-label="${s.label}" data-wname="${esc(v.name)}"`
         : '';
-      return `<td><div class="table-stat" ${attrs}>${valHtml}</div></td>`;
+      const isBest = hasDiffs && bestVal !== null && getCompareValue(val, s.key) === bestVal;
+      const cellCls = isBest ? 'table-stat stat-best' : 'table-stat';
+      return `<td><div class="${cellCls}" ${attrs}>${valHtml}</div></td>`;
     }).join('');
 
     let labelHtml = s.label;
@@ -572,7 +710,7 @@ function renderFamilyDetail(family) {
             <span class="info-tooltip-content">
               <span class="tooltip-title">Формула:</span>
               <span class="formula-fraction">
-                <span class="fraction-numerator">Урон × Снаряды</span>
+                <span class="fraction-numerator">Урон × Снарядов за выстрел</span>
                 <span class="fraction-denominator">Задержка</span>
               </span>
             </span>
@@ -585,13 +723,23 @@ function renderFamilyDetail(family) {
   }).join('');
 
   // Projectile count row (only if at least one variant has projectileCount > 1)
+  let projectileRow = '';
   const hasMultipleProjectiles = variants.some(v => v.projectileCount && v.projectileCount > 1);
-  const projectileRow = hasMultipleProjectiles
-    ? `<tr>
+  if (hasMultipleProjectiles) {
+    const projCompValues = variants.map(v => v.projectileCount || 1);
+    const maxProj = Math.max(...projCompValues);
+    const hasProjDiffs = projCompValues.length > 1 && new Set(projCompValues).size > 1;
+
+    projectileRow = `<tr>
         <td><div class="row-label">Кол-во снарядов за выстрел</div></td>
-        ${variants.map(v => `<td><div class="table-stat">${v.projectileCount || 1}</div></td>`).join('')}
-       </tr>`
-    : '';
+        ${variants.map(v => {
+          const val = v.projectileCount || 1;
+          const isBest = hasProjDiffs && val === maxProj;
+          const cellCls = isBest ? 'table-stat stat-best' : 'table-stat';
+          return `<td><div class="${cellCls}">${val}</div></td>`;
+        }).join('')}
+       </tr>`;
+  }
 
   // File row
   const fileRow = `
@@ -633,6 +781,7 @@ function renderFamilyDetail(family) {
         </tbody>
       </table>
     </div>
+    ${variants.length > 1 ? renderStatsVisualization(variants) : ''}
     <div class="detail-changelog-section" style="margin-top: 40px;">
       <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">
         История изменений оружия
@@ -642,6 +791,177 @@ function renderFamilyDetail(family) {
       : `<div class="changelog-wrap">${familyPatches.map(renderPatchCard).join('')}</div>`
     }
     </div>`;
+}
+
+// ================================================================
+//  STATS PROGRESS BARS VISUALIZATION
+// ================================================================
+function renderStatsVisualization(variants) {
+  // Max values for normalization in progress bars
+  const maxDamage = Math.max(...variants.map(v => v.damage || 0));
+  const maxDps = Math.max(...variants.map(v => v.dps || 0));
+  const maxClip = Math.max(...variants.map(v => v.clipSize || 0));
+  const maxDelay = Math.max(...variants.map(v => v.delay || 0.001));
+  const maxReload = Math.max(...variants.map(v => {
+    if (v.reload == null) return 0;
+    const num = parseFloat(String(v.reload).replace(',', '.'));
+    return isNaN(num) ? 0 : num;
+  }));
+
+  const cardsHtml = variants.map(v => {
+    const dmgPct = maxDamage ? (v.damage / maxDamage) * 100 : 0;
+    const dpsPct = maxDps ? (v.dps / maxDps) * 100 : 0;
+    const clipPct = maxClip ? (v.clipSize / maxClip) * 100 : 0;
+    const delayPct = v.delay && maxDelay ? (v.delay / maxDelay) * 100 : 0;
+    
+    const rVal = v.reload != null ? parseFloat(String(v.reload).replace(',', '.')) : 0;
+    const reloadPct = !isNaN(rVal) && maxReload ? (rVal / maxReload) * 100 : 0;
+
+    return `
+      <div class="visual-variant-card">
+        <div class="visual-variant-name">${v.name}</div>
+        <div class="visual-stats-list">
+          <div class="visual-stat-row">
+            <div class="visual-label">Урон: <strong>${v.damage ?? '—'}</strong></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${dmgPct}%; background: var(--accent);"></div></div>
+          </div>
+          <div class="visual-stat-row">
+            <div class="visual-label">DPS: <strong>${v.dps ?? '—'}</strong></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${dpsPct}%; background: #eab308;"></div></div>
+          </div>
+          <div class="visual-stat-row">
+            <div class="visual-label">Магазин: <strong>${v.clipSize ?? '—'}</strong></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${clipPct}%; background: #3b82f6;"></div></div>
+          </div>
+          <div class="visual-stat-row">
+            <div class="visual-label">Задержка: <strong>${v.delay ?? '—'}c</strong></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${delayPct}%; background: #06b6d4;"></div></div>
+          </div>
+          <div class="visual-stat-row">
+            <div class="visual-label">Перезарядка: <strong>${v.reload ?? '—'}c</strong></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${reloadPct}%; background: #10b981;"></div></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="stats-visualization-section">
+      <h3 class="section-title">Визуальное сравнение веток</h3>
+      <div class="visual-charts-grid">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+// ================================================================
+//  VIEW: COMPARE SCREEN
+// ================================================================
+function renderComparePage() {
+  if (compareList.length === 0) {
+    document.getElementById('app').innerHTML = `
+      <a class="back-btn" href="#weapons">← К списку оружия</a>
+      <div class="empty-state" style="padding: 80px 20px;">
+        <h3>Список сравнения пуст</h3>
+        <p style="color: var(--text-3); margin-top: 8px;">Нажмите кнопку «⚖» на карточках любого оружия, чтобы добавить его сюда.</p>
+      </div>
+    `;
+    return;
+  }
+  if (compareList.length < 2) {
+    document.getElementById('app').innerHTML = `
+      <a class="back-btn" href="#weapons">← К списку оружия</a>
+      <div class="empty-state" style="padding: 80px 20px;">
+        <h3>Недостаточно оружия для сравнения</h3>
+        <p style="color: var(--text-3); margin-top: 8px;">Выберите как минимум 2 оружия для сравнения (сейчас выбрано: 1).</p>
+      </div>
+    `;
+    return;
+  }
+
+  // Gather exact selected variants
+  const selectedWeapons = [];
+  for (const key of compareList) {
+    const [fam, vtype] = key.split(':');
+    const variants = familyMap.get(fam) || [];
+    const w = variants.find(v => v.variantType === vtype);
+    if (w) selectedWeapons.push(w);
+  }
+
+  // Column headers
+  const colHeaders = selectedWeapons.map(w => {
+    const ammoClr = AMMO_COLORS[w.ammo] ?? '#888';
+    const ammoLbl = AMMO_LABELS[w.ammo] ?? w.ammo;
+    return `
+      <th>
+        <div class="compare-header-cell">
+          <span class="compare-weapon-name">${w.name}</span>
+          <div style="margin-top: 4px; display: flex; gap: 6px; justify-content: center; align-items: center;">
+            <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">Tier ${tl(w.tier)}</span>
+            <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:8px;padding:1px 4px;">${ammoLbl}</span>
+          </div>
+          <button class="compare-remove-header-btn" onclick="toggleCompare('${esc(w.family)}:${w.variantType}')">Убрать</button>
+        </div>
+      </th>
+    `;
+  }).join('');
+
+  // Row compare value parsing helper
+  const getCompareValue = (val, key) => {
+    if (val == null) return null;
+    if (typeof val === 'number') return val;
+    const str = String(val).replace(',', '.');
+    const num = parseFloat(str);
+    return isNaN(num) ? null : num;
+  };
+
+  const compareStats = [
+    ...STAT_DEFS,
+    { key: 'projectileCount', label: 'Снарядов за выстрел', unit: '' }
+  ];
+
+  const statRows = compareStats.map(s => {
+    const isMinBest = (s.key === 'delay' || s.key === 'reload');
+    const compValues = selectedWeapons
+      .map(w => getCompareValue(w[s.key], s.key))
+      .filter(x => x !== null);
+    const bestVal = compValues.length > 0
+      ? (isMinBest ? Math.min(...compValues) : Math.max(...compValues))
+      : null;
+    const hasDiffs = compValues.length > 1 && new Set(compValues).size > 1;
+
+    const cells = selectedWeapons.map(w => {
+      const val = w[s.key];
+      const valHtml = val != null ? `${val}${s.unit ? ` ${s.unit}` : ''}` : '—';
+      const isBest = hasDiffs && bestVal !== null && getCompareValue(val, s.key) === bestVal;
+      const cellCls = isBest ? 'table-stat stat-best' : 'table-stat';
+      return `<td><div class="${cellCls}">${valHtml}</div></td>`;
+    }).join('');
+
+    return `<tr><td><div class="row-label">${s.label}</div></td>${cells}</tr>`;
+  }).join('');
+
+  document.getElementById('app').innerHTML = `
+    <a class="back-btn" href="#weapons">← К списку оружия</a>
+    <div class="detail-title-row" style="margin-bottom: 24px;">
+      <span class="detail-title">Сравнение оружия</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Параметр</th>
+            ${colHeaders}
+          </tr>
+        </thead>
+        <tbody>
+          ${statRows}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 // ================================================================
