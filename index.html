@@ -47,8 +47,20 @@
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="search" id="search-input" placeholder="Поиск по оружию или ветке…" autocomplete="off">
       </div>
+      <!-- Mobile-only search toggle button -->
+      <button class="search-toggle-btn" id="search-toggle-btn" aria-label="Поиск">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </button>
     </div>
   </header>
+  <!-- Mobile search panel (shown below header on mobile) -->
+  <div id="mobile-search-panel" class="mobile-search-panel hidden">
+    <div class="mobile-search-inner">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="mobile-search-input" placeholder="Поиск по оружию или ветке…" autocomplete="off">
+      <button id="mobile-search-close" class="mobile-search-close" aria-label="Закрыть поиск">✕</button>
+    </div>
+  </div>
 
   <main id="app">
     <div class="loading-screen">

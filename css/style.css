@@ -55,6 +55,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 16px);
+  overflow-x: hidden;
 }
 
 body {
@@ -66,6 +67,7 @@ body {
   font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -193,6 +195,113 @@ body {
 }
 #search-input::placeholder { color: var(--text-3); }
 #search-input:focus { border-color: var(--border-2); background: var(--bg-3); }
+#search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--text-3);
+  cursor: pointer;
+  border-radius: 50%;
+  opacity: 0.5;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  transition: opacity 0.15s ease;
+}
+#search-input::-webkit-search-cancel-button:hover { opacity: 1; }
+
+/* Mobile search toggle button (hidden on desktop) */
+.search-toggle-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text-2);
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  margin-left: auto;
+  transition: all var(--ease);
+}
+.search-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.search-toggle-btn:hover,
+.search-toggle-btn.active {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-glow);
+}
+
+/* Mobile search panel (drop-down below header) */
+.mobile-search-panel {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 18, 0.97);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  z-index: 199;
+  transform: translateY(-8px);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+  pointer-events: none;
+}
+.mobile-search-panel.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-search-inner {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+  position: relative;
+}
+.mobile-search-inner .search-icon {
+  position: absolute;
+  left: 24px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+#mobile-search-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-2);
+  color: var(--text);
+  padding: 9px 12px 9px 34px;
+  border-radius: var(--r-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--ease);
+}
+#mobile-search-input::placeholder { color: var(--text-3); }
+#mobile-search-input:focus { border-color: var(--accent-dim); background: var(--bg-3); }
+#mobile-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--text-3);
+  cursor: pointer;
+  border-radius: 50%;
+  opacity: 0.5;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  transition: opacity 0.15s ease;
+}
+#mobile-search-input::-webkit-search-cancel-button:hover { opacity: 1; }
+.mobile-search-close {
+  display: none;
+}
 
 /* ================================================================
    LAYOUT
@@ -285,6 +394,27 @@ body {
   background: var(--accent-glow);
 }
 
+/* Reset filters button */
+.reset-filters-btn {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.07);
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all var(--ease);
+  white-space: nowrap;
+}
+.reset-filters-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.7);
+}
+
 /* ================================================================
    RESULTS COUNT
    ================================================================ */
@@ -300,7 +430,7 @@ body {
    ================================================================ */
 .weapons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 14px;
 }
 
@@ -316,6 +446,8 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
 }
 .family-card::before {
   content: '';
@@ -799,8 +931,11 @@ body {
   border-radius: var(--r-xl);
   width: 100%;
   max-width: 500px;
+  max-height: 85vh;
   box-shadow: var(--shadow-lg);
   animation: slideUp 0.18s ease;
+  display: flex;
+  flex-direction: column;
 }
 .modal-header {
   padding: 16px 20px;
@@ -833,7 +968,12 @@ body {
   transition: all var(--ease);
 }
 .modal-close:hover { color: var(--text); border-color: var(--border-2); background: var(--bg-3); }
-.modal-body { padding: 16px 20px; }
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+}
 
 /* History timeline */
 .history-list { display: flex; flex-direction: column; gap: 6px; }
@@ -1194,6 +1334,7 @@ a.h-patch-link:active {
 .visual-label {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 9px;
   color: var(--text-3);
   text-transform: uppercase;
@@ -1201,6 +1342,10 @@ a.h-patch-link:active {
 }
 .visual-label strong {
   color: var(--text);
+  font-size: 13px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  line-height: 1;
 }
 .visual-bar-bg {
   height: 6px;
@@ -1255,11 +1400,202 @@ a.h-patch-link:active {
    RESPONSIVE
    ================================================================ */
 @media (max-width: 700px) {
-  .header-inner { gap: 14px; padding: 0 14px; }
-  .logo-sub { display: none; }
-  .header-search { max-width: none; }
-  #app { padding: calc(var(--header-h) + 18px) 14px 40px; }
-  .weapons-grid { grid-template-columns: 1fr; }
-  .filters-bar { gap: 10px; }
-  .detail-title { font-size: 26px; }
+  :root {
+    --header-h: 60px;
+  }
+
+  /* Header stays single-row, fixed height */
+  #header {
+    height: var(--header-h);
+  }
+  .header-inner {
+    flex-wrap: nowrap;
+    height: 100%;
+    padding: 0 14px;
+    gap: 10px;
+  }
+  .logo-sub {
+    display: none;
+  }
+  .nav-tabs {
+    gap: 2px;
+  }
+  .nav-tab {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .help-btn {
+    padding: 4px 7px;
+    font-size: 10px;
+    margin-left: 2px;
+  }
+
+  /* Hide desktop search bar, show toggle icon */
+  .header-search {
+    display: none;
+  }
+  .search-toggle-btn {
+    display: flex;
+  }
+  
+  /* Main Container Padding */
+  #app {
+    padding: calc(var(--header-h) + 16px) 14px 40px;
+    max-width: 100%;
+  }
+
+  /* Single-column card grid on mobile */
+  .weapons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Card layout fixes */
+  .family-card {
+    max-width: 100%;
+    width: 100%;
+  }
+  .family-card:hover {
+    transform: none;
+  }
+  .card-header {
+    padding: 12px 12px 8px;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .family-name {
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .base-weapon-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Hide ammo badge on mobile to free header space */
+  .ammo-badge {
+    display: none;
+  }
+
+  /* Card stats: 3 columns on mobile */
+  .card-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 6px;
+    padding: 10px 12px;
+  }
+  .stat-value {
+    font-size: 14px;
+  }
+  .card-footer {
+    padding: 8px 12px;
+  }
+  .card-arrow {
+    font-size: 10px;
+  }
+  
+  /* Filters Stacking */
+  .filters-bar {
+    padding: 12px 14px;
+    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .filter-chips {
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+  
+  /* Grid Layouts */
+  .weapons-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  /* Detail view elements */
+  .detail-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .detail-title {
+    font-size: 24px;
+  }
+  .detail-meta {
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+  }
+  
+  /* Smooth touch scroll for tables */
+  .table-wrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Mobile Modals */
+  .modal {
+    max-width: 92vw;
+    max-height: 90vh;
+    border-radius: var(--r-lg);
+  }
+  .modal-header {
+    padding: 16px;
+  }
+  .modal-body {
+    padding: 16px;
+  }
+  
+  /* Compact tables on mobile */
+  .comparison-table th {
+    padding: 10px 12px;
+  }
+  .comparison-table td {
+    padding: 10px 12px;
+  }
+  .comparison-table th:not(:first-child) {
+    min-width: 100px;
+  }
+  
+  /* Compact compare widget on mobile */
+  .compare-widget {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    padding: 12px;
+    border-radius: var(--r-lg);
+    gap: 8px;
+  }
+  .compare-widget-items {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .compare-widget-item {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+.table-scroll-hint {
+  display: none;
+  font-size: 10px;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+@media (max-width: 700px) {
+  .table-scroll-hint {
+    display: block;
+  }
 }

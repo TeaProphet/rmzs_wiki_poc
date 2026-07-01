@@ -60,7 +60,17 @@ let latestChange = {};          // "family:vtype:stat" → {patch,date,old,new} 
 let latestPatch = null;        // the changelog entry with the most recent date
 let compareList = [];         // selected weapon families for side-by-side comparison
 
-const filters = { search: '', tier: 'all', ammo: 'all', sortBy: 'default', sortOrder: 'asc' };
+const filters = { search: '', tiers: new Set(), ammos: new Set(), sortBy: 'default', sortOrder: 'asc' };
+function hasFiltersActive() {
+  return filters.tiers.size > 0 || filters.ammos.size > 0 || filters.sortBy !== 'default';
+}
+function resetFilters() {
+  filters.tiers.clear();
+  filters.ammos.clear();
+  filters.sortBy = 'default';
+  filters.sortOrder = 'asc';
+  renderWeapons();
+}
 
 // ================================================================
 //  INIT
@@ -198,6 +208,7 @@ function buildChangesIndex() {
 //  ROUTER
 // ================================================================
 function handleRoute() {
+  updateCompareWidget();
   const hash = location.hash || '#weapons';
   const tabW = document.getElementById('tab-weapons');
   const tabCL = document.getElementById('tab-changelog');
@@ -264,7 +275,8 @@ function updateCompareWidget() {
   const widget = document.getElementById('compare-widget');
   if (!widget) return;
   
-  if (compareList.length === 0) {
+  const hash = location.hash || '#weapons';
+  if (compareList.length === 0 || hash === '#compare') {
     widget.classList.add('hidden');
     return;
   }
@@ -317,6 +329,7 @@ function openHelpModal() {
         <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">📈 История изменений и индикаторы патчей</h4>
         <p>Клик по любой числовой характеристике откроет окно с полной историей её изменений. Рядом с изменёнными параметрами выводятся цветные стрелки: <span style="color: var(--buff);">▲ (бафф)</span> и <span style="color: var(--nerf);">▼ (нерф)</span>.</p>
         <p><strong>Клик по стрелке</strong> перенесёт вас во вкладку <strong>Changelog</strong> к конкретному патчу, в котором это изменение было выпущено. Патч автоматически прокрутится на экран и подсветится кратковременной вспышкой.</p>
+        <p><em>Примечание: если числовая характеристика не кликается при наведении курсора, значит, у неё нет истории изменений (параметр оставался неизменным с момента версии 1.0).</em></p>
       </div>
 
       <div>
@@ -339,13 +352,52 @@ function openHelpModal() {
 function setupEvents() {
   window.addEventListener('hashchange', handleRoute);
 
-  // Search
+  // Desktop search
   document.getElementById('search-input').addEventListener('input', e => {
-    filters.search = e.target.value.trim().toLowerCase();
-    if (!location.hash.startsWith('#family/') && location.hash !== '#changelog') {
-      renderWeapons();
-    } else if (filters.search) {
-      location.hash = '#weapons';   // navigate back; hashchange will renderWeapons()
+    applySearch(e.target.value);
+  });
+
+  // Mobile search toggle button
+  const searchToggleBtn = document.getElementById('search-toggle-btn');
+  const mobileSearchPanel = document.getElementById('mobile-search-panel');
+  const mobileSearchInput = document.getElementById('mobile-search-input');
+  const mobileSearchClose = document.getElementById('mobile-search-close');
+
+  function openMobileSearch() {
+    mobileSearchPanel.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      mobileSearchPanel.classList.add('open');
+      searchToggleBtn.classList.add('active');
+      mobileSearchInput.focus();
+    });
+  }
+
+  function closeMobileSearch() {
+    mobileSearchPanel.classList.remove('open');
+    searchToggleBtn.classList.remove('active');
+    setTimeout(() => mobileSearchPanel.classList.add('hidden'), 200);
+    mobileSearchInput.value = '';
+    applySearch('');
+  }
+
+  searchToggleBtn.addEventListener('click', () => {
+    if (mobileSearchPanel.classList.contains('open')) {
+      closeMobileSearch();
+    } else {
+      openMobileSearch();
+    }
+  });
+
+  mobileSearchClose.addEventListener('click', closeMobileSearch);
+
+  mobileSearchInput.addEventListener('input', e => {
+    applySearch(e.target.value);
+  });
+
+  // Close mobile search on navigation
+  window.addEventListener('hashchange', () => {
+    if (mobileSearchPanel.classList.contains('open')) {
+      closeMobileSearch();
     }
   });
 
@@ -420,12 +472,24 @@ function setupEvents() {
   });
 }
 
+function applySearch(value) {
+  filters.search = value.trim().toLowerCase();
+  if (!location.hash.startsWith('#family/') && location.hash !== '#changelog') {
+    renderWeapons();
+  } else if (filters.search) {
+    location.hash = '#weapons';
+  }
+}
+
 function toggleFilter(type, value) {
-  filters[type] = filters[type] === value ? 'all' : value;
-  // Sync chip states
-  document.querySelectorAll(`.chip[data-${type}]`).forEach(c => {
-    c.classList.toggle('active', c.dataset[type] === filters[type]);
-  });
+  // type is 'tier' or 'ammo', maps to filters.tiers / filters.ammos
+  const setKey = type === 'tier' ? 'tiers' : 'ammos';
+  const set = filters[setKey];
+  if (set.has(value)) {
+    set.delete(value);
+  } else {
+    set.add(value);
+  }
   renderWeapons();
 }
 
@@ -454,8 +518,8 @@ function renderWeapons() {
 
   // Filter individual weapons (all variants, not just base)
   const filteredWeapons = weaponsData.filter(w => {
-    if (filters.tier !== 'all' && String(w.tier) !== filters.tier) return false;
-    if (filters.ammo !== 'all' && w.ammo !== filters.ammo) return false;
+    if (filters.tiers.size > 0 && !filters.tiers.has(String(w.tier))) return false;
+    if (filters.ammos.size > 0 && !filters.ammos.has(w.ammo)) return false;
     if (filters.search) {
       const q = filters.search;
       return w.family.toLowerCase().includes(q) || w.name.toLowerCase().includes(q);
@@ -483,13 +547,17 @@ function renderWeapons() {
     });
   }
 
+  const resetBtn = hasFiltersActive()
+    ? `<button class="reset-filters-btn" onclick="resetFilters()">✕ Сбросить фильтры</button>`
+    : '';
+
   document.getElementById('app').innerHTML = `
     <div class="filters-bar">
       <div class="filter-group">
         <span class="filter-label">Тир</span>
         <div class="filter-chips">
           ${allTiers.map(t => `
-            <button class="chip${filters.tier === String(t) ? ' active' : ''}" data-tier="${t}">T${t}</button>
+            <button class="chip${filters.tiers.has(String(t)) ? ' active' : ''}" data-tier="${t}">T${t}</button>
           `).join('')}
         </div>
       </div>
@@ -497,7 +565,7 @@ function renderWeapons() {
         <span class="filter-label">Патроны</span>
         <div class="filter-chips">
           ${allAmmos.map(a => {
-            const isActive = filters.ammo === a;
+            const isActive = filters.ammos.has(a);
             const ammoClr = AMMO_COLORS[a] ?? '#888';
             const styleAttr = isActive ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26;"` : '';
             return `
@@ -531,6 +599,7 @@ function renderWeapons() {
           </button>
         </div>
       </div>
+      ${resetBtn}
     </div>
     <div class="results-info">
       Показано оружия: <strong>${filteredWeapons.length}</strong> из <strong>${weaponsData.length}</strong>
@@ -766,6 +835,7 @@ function renderFamilyDetail(family) {
       <span>${AMMO_LABELS[base.ammo] ?? base.ammo}</span>
       ${patchTag ? `<span class="dot">·</span>${patchTag}` : ''}
     </div>
+    <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
     <div class="table-wrapper">
       <table class="comparison-table">
         <thead>
@@ -948,6 +1018,7 @@ function renderComparePage() {
     <div class="detail-title-row" style="margin-bottom: 24px;">
       <span class="detail-title">Сравнение оружия</span>
     </div>
+    <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
     <div class="table-wrapper">
       <table class="comparison-table">
         <thead>
