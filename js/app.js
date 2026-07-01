@@ -66,9 +66,13 @@ const filters = { search: '', tier: 'all', ammo: 'all' };
 // ================================================================
 async function init() {
   try {
+    const scriptSrc = document.currentScript ? document.currentScript.src : '';
+    const urlParams = new URLSearchParams(scriptSrc.split('?')[1] || '');
+    const ver = urlParams.get('v') || Date.now();
+
     [weaponsData, changelogData] = await Promise.all([
-      fetch('data/weapons.json').then(r => { if (!r.ok) throw new Error('weapons.json not found'); return r.json(); }),
-      fetch('data/changelog.json').then(r => { if (!r.ok) throw new Error('changelog.json not found'); return r.json(); }),
+      fetch(`data/weapons.json?v=${ver}`).then(r => { if (!r.ok) throw new Error('weapons.json not found'); return r.json(); }),
+      fetch(`data/changelog.json?v=${ver}`).then(r => { if (!r.ok) throw new Error('changelog.json not found'); return r.json(); }),
     ]);
     buildFamilyMap();
     buildChangesIndex();
