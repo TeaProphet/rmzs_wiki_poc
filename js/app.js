@@ -60,17 +60,64 @@ let latestChange = {};          // "family:vtype:stat" → {patch,date,old,new} 
 let latestPatch = null;        // the changelog entry with the most recent date
 let compareList = [];         // selected weapon families for side-by-side comparison
 
-const filters = { search: '', tiers: new Set(), ammos: new Set(), sortBy: 'default', sortOrder: 'asc' };
+const favorites = new Set(JSON.parse(localStorage.getItem('wiki_favorites') || '[]'));
+
+const filters = {
+  search: '',
+  tiers: new Set(),
+  ammos: new Set(),
+  sortBy: 'default',
+  sortOrder: 'asc',
+  favoritesOnly: false,
+  showStatFilters: false,
+  statBounds: {
+    damage: { min: null, max: null },
+    clipSize: { min: null, max: null },
+    delay: { min: null, max: null },
+    reload: { min: null, max: null },
+    dps: { min: null, max: null }
+  }
+};
+
 function hasFiltersActive() {
-  return filters.tiers.size > 0 || filters.ammos.size > 0 || filters.sortBy !== 'default';
+  const hasBounds = Object.values(filters.statBounds).some(b => b.min !== null || b.max !== null);
+  return filters.tiers.size > 0 || filters.ammos.size > 0 || filters.sortBy !== 'default' || filters.favoritesOnly || hasBounds;
 }
+
 function resetFilters() {
   filters.tiers.clear();
   filters.ammos.clear();
   filters.sortBy = 'default';
   filters.sortOrder = 'asc';
+  filters.favoritesOnly = false;
+  filters.showStatFilters = false;
+  for (const key in filters.statBounds) {
+    filters.statBounds[key].min = null;
+    filters.statBounds[key].max = null;
+  }
   renderWeapons();
 }
+
+function toggleFavorite(key) {
+  if (favorites.has(key)) {
+    favorites.delete(key);
+  } else {
+    favorites.add(key);
+  }
+  localStorage.setItem('wiki_favorites', JSON.stringify([...favorites]));
+  renderWeapons();
+}
+
+function toggleFavoritesFilter() {
+  filters.favoritesOnly = !filters.favoritesOnly;
+  renderWeapons();
+}
+
+function toggleStatFiltersPanel() {
+  filters.showStatFilters = !filters.showStatFilters;
+  renderWeapons();
+}
+
 
 // ================================================================
 //  INIT
@@ -233,9 +280,14 @@ function handleRoute() {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
     renderFamilyDetail(decodeURIComponent(hash.slice(8)));
-  } else if (hash === '#compare') {
+  } else if (hash.startsWith('#compare')) {
     tabW.classList.add('active');
     tabCL.classList.remove('active');
+    
+    const match = hash.match(/#compare\?w=([^&]+)/);
+    if (match) {
+      compareList = match[1].split(',').filter(Boolean);
+    }
     renderComparePage();
   } else {
     tabW.classList.add('active');
@@ -264,8 +316,12 @@ function toggleCompare(wkey) {
   const hash = location.hash || '#weapons';
   if (hash === '#weapons') {
     renderWeapons();
-  } else if (hash === '#compare') {
-    renderComparePage();
+  } else if (hash.startsWith('#compare')) {
+    if (compareList.length < 2) {
+      location.hash = '#weapons';
+    } else {
+      location.hash = `#compare?w=${compareList.join(',')}`;
+    }
   } else if (hash.startsWith('#family/')) {
     renderFamilyDetail(decodeURIComponent(hash.slice(8)));
   }
@@ -276,7 +332,7 @@ function updateCompareWidget() {
   if (!widget) return;
   
   const hash = location.hash || '#weapons';
-  if (compareList.length === 0 || hash === '#compare') {
+  if (compareList.length === 0 || hash.startsWith('#compare')) {
     widget.classList.add('hidden');
     return;
   }
@@ -293,12 +349,12 @@ function updateCompareWidget() {
         return `
           <div class="compare-widget-item">
             <span style="font-weight:600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 170px;">${name}</span>
-            <button onclick="toggleCompare('${esc(key)}')">×</button>
+            <button class="compare-widget-remove-btn" data-wkey="${esc(key)}">×</button>
           </div>
         `;
       }).join('')}
     </div>
-    <button onclick="goCompare()" class="compare-widget-go-btn" style="border:none; cursor:pointer; width:100%; display:block;">Сравнить</button>
+    <button id="compare-widget-go-btn" class="compare-widget-go-btn" style="border:none; cursor:pointer; width:100%; display:block;">Сравнить</button>
   `;
 }
 
@@ -307,7 +363,7 @@ function goCompare() {
     alert("Выберите как минимум 2 оружия для сравнения!");
     return;
   }
-  location.hash = '#compare';
+  location.hash = `#compare?w=${compareList.join(',')}`;
 }
 
 function openHelpModal() {
@@ -315,27 +371,40 @@ function openHelpModal() {
     <div class="help-content" style="display: flex; flex-direction: column; gap: 20px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.6; color: var(--text-2);">
       <div>
         <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">🔍 Поиск, сортировка и фильтры</h4>
-        <p>Вы можете искать оружие по названию или по имени lua-файла. Доступны фильтры по <strong>тирам (T1-T6)</strong> и <strong>типам патронов</strong>.</p>
-        <p>Клик по кнопке сортировки (Урон, DPS, Задержка, Перезарядка) упорядочит список. Повторный клик по тому же критерию изменит направление сортировки (по возрастанию / убыванию), что отмечается стрелкой на кнопке.</p>
+        <p>Вы можете искать оружие по названию или по имени lua-файла. Доступны фильтры по <strong>тирам (T1-T6)</strong> и <strong>типам патронов</strong> (можно выбирать <strong>несколько значений одновременно</strong>).</p>
+        <p>Кнопка <strong>«Поиск по характеристикам»</strong> открывает панель диапазонов («от» и «до») для числовых параметров: Урон, DPS, Магазин, Задержка, Перезарядка.</p>
+        <p>Клик по кнопке сортировки упорядочит список. Повторный клик изменит направление сортировки (по возрастанию / убыванию), что отмечается стрелкой.</p>
+      </div>
+
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">⭐ Избранное оружие</h4>
+        <p>Нажмите звездочку <strong>★</strong> на любой карточке оружия, чтобы сохранить конкретную ветку в Избранное. Включив фильтр <strong>«Только избранное»</strong>, вы скроете всё остальное. Список сохраняется в памяти вашего браузера.</p>
       </div>
       
       <div>
         <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">⚖ Сравнение оружия</h4>
-        <p>Иконка весов <strong>⚖</strong> на карточке оружия добавляет его в список сравнения (до <strong>5 единиц одновременно</strong>). В виджете в углу нажмите кнопку <strong>«Сравнить»</strong> для перехода к детальной таблице.</p>
-        <p>В таблице лучшие характеристики подсвечиваются зелёным цветом, а под таблицей выводится блок с наглядными прогресс-барами для быстрой оценки параметров веток.</p>
+        <p>Иконка весов <strong>⚖</strong> добавляет выбранное оружие в сравнение (до <strong>5 единиц одновременно</strong>). В виджете внизу экрана нажмите кнопку <strong>«Сравнить»</strong> для перехода к детальной таблице.</p>
+        <p>В таблице лучшие характеристики выделяются зеленым цветом. Список сравнения кодируется в URL-адресе, поэтому ссылкой на сравнение можно поделиться с другими игроками.</p>
       </div>
 
       <div>
         <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">📈 История изменений и индикаторы патчей</h4>
-        <p>Клик по любой числовой характеристике откроет окно с полной историей её изменений. Рядом с изменёнными параметрами выводятся цветные стрелки: <span style="color: var(--buff);">▲ (бафф)</span> и <span style="color: var(--nerf);">▼ (нерф)</span>.</p>
+        <p>Клик по любой числовой характеристике откроет окно с историей её изменений. Рядом с изменёнными параметрами выводятся цветные стрелки: <span style="color: var(--buff);">▲ (бафф)</span> и <span style="color: var(--nerf);">▼ (нерф)</span>.</p>
         <p><strong>Клик по стрелке</strong> перенесёт вас во вкладку <strong>Changelog</strong> к конкретному патчу, в котором это изменение было выпущено. Патч автоматически прокрутится на экран и подсветится кратковременной вспышкой.</p>
-        <p><em>Примечание: если числовая характеристика не кликается при наведении курсора, значит, у неё нет истории изменений (параметр оставался неизменным с момента версии 1.0).</em></p>
       </div>
 
       <div>
-        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">🔗 Умная навигация и закладки</h4>
-        <p>Все переходы внутри Wiki (просмотр карточек, вкладка изменений, окно сравнения и даже ссылки на конкретные патчи) отображаются в URL-адресе в виде хешей (например, <code>#compare</code>, <code>#family/Scattershot</code>, <code>#patch-v1.2</code>).</p>
-        <p>Вы можете свободно копировать адресную строку, делиться ссылками с другими или сохранять их в закладки — Wiki откроется ровно в том состоянии, на котором вы её оставили.</p>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">🔗 Умные кнопки «Поделиться»</h4>
+        <p>Вы можете скопировать готовую ссылку с помощью кнопок <strong>«Поделиться»</strong> в детальном просмотре оружия, в сравнении, а также у каждого отдельного патча в истории изменений (ссылка прокрутит и подсветит именно этот патч при открытии).</p>
+      </div>
+
+      <div>
+        <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">⌨ Горячие клавиши (Hotkeys)</h4>
+        <ul style="padding-left: 20px; margin-top: 4px; margin-bottom: 0;">
+          <li><strong>/</strong> — быстрый фокус в строку поиска.</li>
+          <li><strong>Esc</strong> — закрыть модальное окно.</li>
+          <li><strong>ArrowLeft / ArrowRight</strong> — быстрое перелистывание оружия по алфавиту в детальном просмотре.</li>
+        </ul>
       </div>
     </div>
   `;
@@ -401,6 +470,18 @@ function setupEvents() {
     }
   });
 
+  // Listen for stat bound inputs
+  document.addEventListener('change', e => {
+    if (e.target.classList.contains('stat-range-input')) {
+      const stat = e.target.dataset.filterStat;
+      const bound = e.target.dataset.filterBound;
+      const valStr = e.target.value.trim();
+      const val = valStr === '' ? null : parseFloat(valStr);
+      filters.statBounds[stat][bound] = val;
+      renderWeapons();
+    }
+  });
+
   // Help button
   document.getElementById('help-btn').addEventListener('click', openHelpModal);
 
@@ -413,6 +494,14 @@ function setupEvents() {
     // Close modal when clicking links inside it (e.g. patch links)
     if (e.target.closest('[data-close-modal]')) {
       closeModal();
+    }
+
+    // Toggle stat filters button (has .chip class, checked first)
+    const statsToggleBtn = e.target.closest('.stats-toggle-btn');
+    if (statsToggleBtn) {
+      e.stopPropagation();
+      toggleStatFiltersPanel();
+      return;
     }
 
     // Filter chips / Sort chips
@@ -451,6 +540,72 @@ function setupEvents() {
       return;
     }
 
+    // 1. Compare widget item remove button
+    const widgetRemoveBtn = e.target.closest('.compare-widget-remove-btn');
+    if (widgetRemoveBtn) {
+      e.stopPropagation();
+      toggleCompare(widgetRemoveBtn.dataset.wkey);
+      return;
+    }
+
+    // 2. Go compare button
+    const goCompareBtn = e.target.closest('#compare-widget-go-btn');
+    if (goCompareBtn) {
+      e.stopPropagation();
+      goCompare();
+      return;
+    }
+
+    // 3. Reset filters button
+    const resetFiltersBtn = e.target.closest('.reset-filters-btn');
+    if (resetFiltersBtn) {
+      e.stopPropagation();
+      resetFilters();
+      return;
+    }
+
+
+    // 5. Toggle favorites button
+    const favFilterBtn = e.target.closest('.fav-filter-btn');
+    if (favFilterBtn) {
+      e.stopPropagation();
+      toggleFavoritesFilter();
+      return;
+    }
+
+    // 6. Share detail / Share patch buttons
+    const shareDetailBtn = e.target.closest('#share-detail-btn');
+    if (shareDetailBtn) {
+      e.stopPropagation();
+      copyToClipboard(window.location.href, shareDetailBtn);
+      return;
+    }
+    const sharePatchBtn = e.target.closest('.share-patch-btn');
+    if (sharePatchBtn) {
+      e.stopPropagation();
+      const patchVal = sharePatchBtn.dataset.patch;
+      const url = `${window.location.origin}${window.location.pathname}#patch-${encodeURIComponent(patchVal)}`;
+      copyToClipboard(url, sharePatchBtn);
+      return;
+    }
+
+    // 7. Compare remove header button
+    const compareRemoveHeaderBtn = e.target.closest('.compare-remove-header-btn');
+    if (compareRemoveHeaderBtn) {
+      e.stopPropagation();
+      toggleCompare(compareRemoveHeaderBtn.dataset.wkey);
+      return;
+    }
+
+    // Favorite badge click
+    const favBadge = e.target.closest('.fav-card-badge');
+    if (favBadge) {
+      e.stopPropagation();
+      e.preventDefault();
+      toggleFavorite(favBadge.dataset.wkey);
+      return;
+    }
+
     // Compare badge click
     const compBadge = e.target.closest('.compare-card-badge');
     if (compBadge) {
@@ -468,7 +623,66 @@ function setupEvents() {
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+      const modalOverlay = document.getElementById('modal-overlay');
+      const isModalOpen = modalOverlay && !modalOverlay.classList.contains('hidden');
+      const mobileSearchPanel = document.getElementById('mobile-search-panel');
+      const isMobileSearchOpen = mobileSearchPanel && mobileSearchPanel.classList.contains('open');
+
+      if (isModalOpen) {
+        closeModal();
+      } else if (isMobileSearchOpen) {
+        closeMobileSearch();
+      } else {
+        const hash = location.hash || '#weapons';
+        if (hash !== '#weapons') {
+          location.hash = '#weapons';
+        }
+      }
+    }
+
+    // Focus search with '/'
+    if (e.key === '/') {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+        return;
+      }
+      e.preventDefault();
+      const isMobile = window.innerWidth <= 700;
+      if (isMobile) {
+        openMobileSearch();
+      } else {
+        const searchInp = document.getElementById('search-input');
+        if (searchInp) {
+          searchInp.focus();
+          searchInp.select();
+        }
+      }
+    }
+
+    // Navigation with Left/Right Arrows in Detailed View
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      const hash = location.hash || '#weapons';
+      if (hash.startsWith('#family/')) {
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) {
+          return;
+        }
+        const currentFamily = decodeURIComponent(hash.split('/')[1]);
+        const sortedFamilies = [...familyMap.keys()].sort();
+        const curIndex = sortedFamilies.indexOf(currentFamily);
+        if (curIndex !== -1) {
+          e.preventDefault();
+          if (e.key === 'ArrowLeft') {
+            const prevFam = sortedFamilies[(curIndex - 1 + sortedFamilies.length) % sortedFamilies.length];
+            location.hash = '#family/' + encodeURIComponent(prevFam);
+          } else {
+            const nextFam = sortedFamilies[(curIndex + 1) % sortedFamilies.length];
+            location.hash = '#family/' + encodeURIComponent(nextFam);
+          }
+        }
+      }
+    }
   });
 }
 
@@ -509,6 +723,7 @@ function toggleSort(value) {
   renderWeapons();
 }
 
+
 // ================================================================
 //  VIEW: WEAPONS LIST
 // ================================================================
@@ -518,8 +733,25 @@ function renderWeapons() {
 
   // Filter individual weapons (all variants, not just base)
   const filteredWeapons = weaponsData.filter(w => {
+    if (filters.favoritesOnly && !favorites.has(w.family + ':' + w.variantType)) return false;
     if (filters.tiers.size > 0 && !filters.tiers.has(String(w.tier))) return false;
     if (filters.ammos.size > 0 && !filters.ammos.has(w.ammo)) return false;
+
+    // Bounds check
+    for (const key in filters.statBounds) {
+      const bound = filters.statBounds[key];
+      const val = w[key];
+      if (val != null) {
+        const numVal = parseFloat(String(val).replace(',', '.'));
+        if (!isNaN(numVal)) {
+          if (bound.min !== null && numVal < bound.min) return false;
+          if (bound.max !== null && numVal > bound.max) return false;
+        }
+      } else if (bound.min !== null || bound.max !== null) {
+        return false;
+      }
+    }
+
     if (filters.search) {
       const q = filters.search;
       return w.family.toLowerCase().includes(q) || w.name.toLowerCase().includes(q);
@@ -527,87 +759,214 @@ function renderWeapons() {
     return true;
   });
 
-  // Sort:
-  if (filters.sortBy === 'default') {
-    filteredWeapons.sort((a, b) => {
-      return ((a.tier ?? 99) - (b.tier ?? 99)) ||
-        a.family.localeCompare(b.family) ||
-        (a.variantNum - b.variantNum);
+  // Update DOM: check if the skeleton exists
+  const hasSkeleton = document.querySelector('.filters-container') !== null;
+  if (hasSkeleton) {
+    // Update chip active states
+    document.querySelectorAll('[data-tier]').forEach(btn => {
+      btn.classList.toggle('active', filters.tiers.has(btn.dataset.tier));
     });
-  } else {
-    const key = filters.sortBy;
-    const isAsc = filters.sortOrder === 'asc';
-    filteredWeapons.sort((a, b) => {
-      const valA = a[key] ?? (isAsc ? 999999 : -999999);
-      const valB = b[key] ?? (isAsc ? 999999 : -999999);
-      if (valA === valB) {
-        return a.family.localeCompare(b.family) || (a.variantNum - b.variantNum);
+    document.querySelectorAll('[data-ammo]').forEach(btn => {
+      const isActive = filters.ammos.has(btn.dataset.ammo);
+      btn.classList.toggle('active', isActive);
+      const ammoClr = AMMO_COLORS[btn.dataset.ammo] ?? '#888';
+      if (isActive) {
+        btn.style.color = ammoClr;
+        btn.style.borderColor = ammoClr;
+        btn.style.background = ammoClr + '26';
+      } else {
+        btn.style.color = '';
+        btn.style.borderColor = '';
+        btn.style.background = '';
       }
-      return isAsc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
     });
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+      const sortBy = btn.dataset.sort;
+      const isActive = filters.sortBy === sortBy;
+      btn.classList.toggle('active', isActive);
+      if (sortBy !== 'default') {
+        const label = sortBy === 'damage' ? 'Урон' :
+                      sortBy === 'dps' ? 'DPS' :
+                      sortBy === 'clipSize' ? 'Магазин' :
+                      sortBy === 'delay' ? 'Задержка' : 'Перезарядка';
+        const arrow = filters.sortBy === sortBy ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : '';
+        btn.textContent = `${label} ${arrow}`.trim();
+      }
+    });
+
+    const favBtn = document.querySelector('.fav-filter-btn');
+    if (favBtn) {
+      favBtn.classList.toggle('active', filters.favoritesOnly);
+    }
+    const statsToggle = document.querySelector('.stats-toggle-btn');
+    if (statsToggle) {
+      statsToggle.classList.toggle('active', filters.showStatFilters);
+    }
+
+    let statPanel = document.querySelector('.stat-filters-panel');
+    if (filters.showStatFilters) {
+      if (!statPanel) {
+        const actionsRow = document.querySelector('.filter-actions-row');
+        if (actionsRow) {
+          const panelHtml = `
+            <div class="stat-filters-panel">
+              ${STAT_DEFS.map(s => {
+                const bound = filters.statBounds[s.key];
+                const minVal = bound.min !== null ? bound.min : '';
+                const maxVal = bound.max !== null ? bound.max : '';
+                return `
+                  <div class="stat-filter-row">
+                    <span class="stat-filter-title">${s.label}</span>
+                    <input type="number" step="any" placeholder="от" class="stat-range-input" data-filter-stat="${s.key}" data-filter-bound="min" value="${minVal}">
+                    <span style="color: var(--text-3)">—</span>
+                    <input type="number" step="any" placeholder="до" class="stat-range-input" data-filter-stat="${s.key}" data-filter-bound="max" value="${maxVal}">
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+          actionsRow.insertAdjacentHTML('afterend', panelHtml);
+        }
+      }
+    } else if (statPanel) {
+      statPanel.remove();
+    }
+
+    const actionsRow = document.querySelector('.filter-actions-row');
+    if (actionsRow) {
+      let resetBtnEl = actionsRow.querySelector('.reset-filters-btn');
+      if (hasFiltersActive()) {
+        if (!resetBtnEl) {
+          actionsRow.insertAdjacentHTML('beforeend', `<button class="reset-filters-btn">✕ Сбросить фильтры</button>`);
+        }
+      } else if (resetBtnEl) {
+        resetBtnEl.remove();
+      }
+    }
+
+    const resultsInfo = document.querySelector('.results-info');
+    if (resultsInfo) {
+      resultsInfo.innerHTML = `Показано оружия: <strong>${filteredWeapons.length}</strong> из <strong>${weaponsData.length}</strong>`;
+    }
+
+    const resultsContainer = document.querySelector('.results-container');
+    if (resultsContainer) {
+      const grid = resultsContainer.querySelector('.weapons-grid');
+      const emptyState = resultsContainer.querySelector('.empty-state');
+      if (filteredWeapons.length === 0) {
+        if (grid) grid.remove();
+        if (!emptyState) {
+          resultsContainer.insertAdjacentHTML('beforeend', `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другой запрос или сбросьте фильтры</p></div>`);
+        }
+      } else {
+        if (emptyState) emptyState.remove();
+        const gridHtml = `<div class="weapons-grid">${filteredWeapons.map(renderWeaponCard).join('')}</div>`;
+        const currentGrid = resultsContainer.querySelector('.weapons-grid');
+        if (currentGrid) {
+          currentGrid.outerHTML = gridHtml;
+        } else {
+          resultsContainer.insertAdjacentHTML('beforeend', gridHtml);
+        }
+      }
+    }
+    return;
   }
 
   const resetBtn = hasFiltersActive()
-    ? `<button class="reset-filters-btn" onclick="resetFilters()">✕ Сбросить фильтры</button>`
+    ? `<button class="reset-filters-btn">✕ Сбросить фильтры</button>`
     : '';
 
   document.getElementById('app').innerHTML = `
-    <div class="filters-bar">
-      <div class="filter-group">
-        <span class="filter-label">Тир</span>
-        <div class="filter-chips">
-          ${allTiers.map(t => `
-            <button class="chip${filters.tiers.has(String(t)) ? ' active' : ''}" data-tier="${t}">T${t}</button>
-          `).join('')}
+    <div class="filters-container">
+      <div class="filters-bar">
+        <div class="filter-group">
+          <span class="filter-label">Тир</span>
+          <div class="filter-chips">
+            ${allTiers.map(t => `
+              <button class="chip${filters.tiers.has(String(t)) ? ' active' : ''}" data-tier="${t}">T${t}</button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Патроны</span>
+          <div class="filter-chips">
+            ${allAmmos.map(a => {
+              const isActive = filters.ammos.has(a);
+              const ammoClr = AMMO_COLORS[a] ?? '#888';
+              const styleAttr = isActive ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26;"` : '';
+              return `
+                <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr}>
+                  ${AMMO_LABELS[a] ?? a}
+                </button>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Параметры</span>
+          <div class="filter-chips">
+            <button class="chip stats-toggle-btn${filters.showStatFilters ? ' active' : ''}">
+              Поиск по характеристикам
+            </button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Сортировка</span>
+          <div class="filter-chips">
+            <button class="chip${filters.sortBy === 'default' ? ' active' : ''}" data-sort="default">
+              По умолчанию
+            </button>
+            <button class="chip${filters.sortBy === 'damage' ? ' active' : ''}" data-sort="damage">
+              Урон ${filters.sortBy === 'damage' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+            </button>
+            <button class="chip${filters.sortBy === 'dps' ? ' active' : ''}" data-sort="dps">
+              DPS ${filters.sortBy === 'dps' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+            </button>
+            <button class="chip${filters.sortBy === 'clipSize' ? ' active' : ''}" data-sort="clipSize">
+              Магазин ${filters.sortBy === 'clipSize' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+            </button>
+            <button class="chip${filters.sortBy === 'delay' ? ' active' : ''}" data-sort="delay">
+              Задержка ${filters.sortBy === 'delay' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+            </button>
+            <button class="chip${filters.sortBy === 'reload' ? ' active' : ''}" data-sort="reload">
+              Перезарядка ${filters.sortBy === 'reload' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
+            </button>
+          </div>
         </div>
       </div>
-      <div class="filter-group">
-        <span class="filter-label">Патроны</span>
-        <div class="filter-chips">
-          ${allAmmos.map(a => {
-            const isActive = filters.ammos.has(a);
-            const ammoClr = AMMO_COLORS[a] ?? '#888';
-            const styleAttr = isActive ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26;"` : '';
+      <div class="filter-actions-row">
+        <button class="fav-filter-btn${filters.favoritesOnly ? ' active' : ''}">
+          ⭐ Только избранное
+        </button>
+        ${resetBtn}
+      </div>
+      ${filters.showStatFilters ? `
+        <div class="stat-filters-panel">
+          ${STAT_DEFS.map(s => {
+            const bound = filters.statBounds[s.key];
+            const minVal = bound.min !== null ? bound.min : '';
+            const maxVal = bound.max !== null ? bound.max : '';
             return `
-              <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr}>
-                ${AMMO_LABELS[a] ?? a}
-              </button>
+              <div class="stat-filter-row">
+                <span class="stat-filter-title">${s.label}</span>
+                <input type="number" step="any" placeholder="от" class="stat-range-input" data-filter-stat="${s.key}" data-filter-bound="min" value="${minVal}">
+                <span style="color: var(--text-3)">—</span>
+                <input type="number" step="any" placeholder="до" class="stat-range-input" data-filter-stat="${s.key}" data-filter-bound="max" value="${maxVal}">
+              </div>
             `;
           }).join('')}
         </div>
-      </div>
-      <div class="filter-group">
-        <span class="filter-label">Сортировка</span>
-        <div class="filter-chips">
-          <button class="chip${filters.sortBy === 'default' ? ' active' : ''}" data-sort="default">
-            По умолчанию
-          </button>
-          <button class="chip${filters.sortBy === 'damage' ? ' active' : ''}" data-sort="damage">
-            Урон ${filters.sortBy === 'damage' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
-          </button>
-          <button class="chip${filters.sortBy === 'dps' ? ' active' : ''}" data-sort="dps">
-            DPS ${filters.sortBy === 'dps' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
-          </button>
-          <button class="chip${filters.sortBy === 'clipSize' ? ' active' : ''}" data-sort="clipSize">
-            Магазин ${filters.sortBy === 'clipSize' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
-          </button>
-          <button class="chip${filters.sortBy === 'delay' ? ' active' : ''}" data-sort="delay">
-            Задержка ${filters.sortBy === 'delay' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
-          </button>
-          <button class="chip${filters.sortBy === 'reload' ? ' active' : ''}" data-sort="reload">
-            Перезарядка ${filters.sortBy === 'reload' ? (filters.sortOrder === 'asc' ? ' ▲' : ' ▼') : ''}
-          </button>
-        </div>
-      </div>
-      ${resetBtn}
+      ` : ''}
     </div>
-    <div class="results-info">
-      Показано оружия: <strong>${filteredWeapons.length}</strong> из <strong>${weaponsData.length}</strong>
+    <div class="results-container">
+      <div class="results-info">
+        Показано оружия: <strong>${filteredWeapons.length}</strong> из <strong>${weaponsData.length}</strong>
+      </div>
+      ${filteredWeapons.length === 0
+        ? `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другой запрос или сбросьте фильтры</p></div>`
+        : `<div class="weapons-grid">${filteredWeapons.map(renderWeaponCard).join('')}</div>`
+      }
     </div>
-    ${filteredWeapons.length === 0
-      ? `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другой запрос или сбросьте фильтры</p></div>`
-      : `<div class="weapons-grid">${filteredWeapons.map(renderWeaponCard).join('')}</div>`
-    }
   `;
 }
 
@@ -666,14 +1025,19 @@ function renderWeaponCard(w) {
   return `
     <div class="family-card ${tc(tier)}" data-family="${esc(family)}">
       <div class="card-header">
-        <div class="card-header-info">
-          <div class="family-name">${w.name}</div>
-          <div class="base-weapon-name">${baseMainName} · ${vtag}</div>
+        <div class="card-top-bar">
+          <div class="card-actions-left">
+            <span class="fav-card-badge ${favorites.has(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="В избранное">${favorites.has(family + ':' + w.variantType) ? '★' : '☆'}</span>
+            <span class="compare-card-badge ${compareList.includes(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="Сравнить оружие">⚖</span>
+          </div>
+          <div class="card-tags-right">
+            <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
+            <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12">${ammoLbl}</span>
+          </div>
         </div>
-        <div class="card-badges">
-          <span class="compare-card-badge ${compareList.includes(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="Сравнить оружие">⚖</span>
-          <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
-          <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12">${ammoLbl}</span>
+        <div class="card-header-info">
+          <div class="family-name" title="${esc(w.name)}">${w.name}</div>
+          <div class="base-weapon-name" title="${esc(baseMainName)} · ${vtag}">${baseMainName} · ${vtag}</div>
         </div>
       </div>
       <div class="card-divider"></div>
@@ -828,6 +1192,10 @@ function renderFamilyDetail(family) {
     <div class="detail-title-row">
       <span class="detail-title">${family}</span>
       <span class="tier-badge ${tc(tier)}">Tier ${tl(tier)}</span>
+      <button id="share-detail-btn" class="share-detail-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
     </div>
     <div class="detail-meta">
       <span>${variants.length} ${pluralVariantFull(variants.length)}</span>
@@ -893,23 +1261,23 @@ function renderStatsVisualization(variants, title = 'Визуальное сра
         <div class="visual-stats-list">
           <div class="visual-stat-row">
             <div class="visual-label">Урон: <strong>${v.damage ?? '—'}</strong></div>
-            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${dmgPct}%; background: var(--accent);"></div></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="--val: ${dmgPct}%; background: var(--accent);"></div></div>
           </div>
           <div class="visual-stat-row">
             <div class="visual-label">DPS: <strong>${v.dps ?? '—'}</strong></div>
-            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${dpsPct}%; background: #eab308;"></div></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="--val: ${dpsPct}%; background: #eab308;"></div></div>
           </div>
           <div class="visual-stat-row">
             <div class="visual-label">Магазин: <strong>${v.clipSize ?? '—'}</strong></div>
-            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${clipPct}%; background: #3b82f6;"></div></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="--val: ${clipPct}%; background: #3b82f6;"></div></div>
           </div>
           <div class="visual-stat-row">
             <div class="visual-label">Задержка: <strong>${v.delay ?? '—'}c</strong></div>
-            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${delayPct}%; background: #06b6d4;"></div></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="--val: ${delayPct}%; background: #06b6d4;"></div></div>
           </div>
           <div class="visual-stat-row">
             <div class="visual-label">Перезарядка: <strong>${v.reload ?? '—'}c</strong></div>
-            <div class="visual-bar-bg"><div class="visual-bar" style="width: ${reloadPct}%; background: #10b981;"></div></div>
+            <div class="visual-bar-bg"><div class="visual-bar" style="--val: ${reloadPct}%; background: #10b981;"></div></div>
           </div>
         </div>
       </div>
@@ -972,7 +1340,7 @@ function renderComparePage() {
             <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">Tier ${tl(w.tier)}</span>
             <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:8px;padding:1px 4px;">${ammoLbl}</span>
           </div>
-          <button class="compare-remove-header-btn" onclick="toggleCompare('${esc(w.family)}:${w.variantType}')">Убрать</button>
+          <button class="compare-remove-header-btn" data-wkey="${esc(w.family)}:${w.variantType}">Убрать</button>
         </div>
       </th>
     `;
@@ -1017,6 +1385,10 @@ function renderComparePage() {
     <a class="back-btn" href="#weapons">← К списку оружия</a>
     <div class="detail-title-row" style="margin-bottom: 24px;">
       <span class="detail-title">Сравнение оружия</span>
+      <button id="share-detail-btn" class="share-detail-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+        Поделиться
+      </button>
     </div>
     <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
     <div class="table-wrapper">
@@ -1060,10 +1432,16 @@ function renderPatchCard(patch) {
   return `
     <div class="patch-card" id="patch-${patch.patch}">
       <div class="patch-head">
-        <span class="patch-version">${patch.patch}</span>
-        <span class="patch-date">${fmtDate(patch.date)}</span>
-        ${patch.description ? `<span class="patch-desc">${patch.description}</span>` : ''}
-        ${changes.length ? `<span class="patch-change-count">${changes.length} изм.</span>` : ''}
+        <div class="patch-head-left">
+          <span class="patch-version">${patch.patch}</span>
+          <span class="patch-date">${fmtDate(patch.date)}</span>
+          ${patch.description ? `<span class="patch-desc">${patch.description}</span>` : ''}
+          ${changes.length ? `<span class="patch-change-count">${pluralizeChanges(changes.length)}</span>` : ''}
+        </div>
+        <button class="share-detail-btn share-patch-btn" data-patch="${patch.patch}" title="Поделиться патчем">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          Поделиться
+        </button>
       </div>
       <div class="patch-body">${changesHtml}</div>
     </div>`;
@@ -1276,6 +1654,33 @@ function pluralVariantFull(n) {
   if (n % 10 === 1 && n % 100 !== 11) return 'вариант';
   if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'варианта';
   return 'вариантов';
+}
+
+function pluralizeChanges(n) {
+  const remainder10 = n % 10;
+  const remainder100 = n % 100;
+  if (remainder10 === 1 && remainder100 !== 11) {
+    return `${n} изменение`;
+  }
+  if ([2, 3, 4].includes(remainder10) && ![12, 13, 14].includes(remainder100)) {
+    return `${n} изменения`;
+  }
+  return `${n} изменений`;
+}
+
+
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btn) {
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '✓ Ссылка скопирована!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+  });
 }
 
 // ================================================================
