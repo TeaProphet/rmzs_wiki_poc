@@ -306,14 +306,16 @@ function handleRoute() {
 // ================================================================
 function toggleCompare(wkey) {
   const idx = compareList.indexOf(wkey);
+  let isAdded = false;
   if (idx > -1) {
     compareList.splice(idx, 1);
   } else {
     if (compareList.length >= 5) {
-      alert("Можно сравнивать не более 5 видов оружия одновременно!");
+      showToast("Можно сравнивать не более 5 видов оружия одновременно!", "warning");
       return;
     }
     compareList.push(wkey);
+    isAdded = true;
   }
   updateCompareWidget();
   
@@ -328,7 +330,12 @@ function toggleCompare(wkey) {
       location.hash = `#compare?w=${compareList.join(',')}`;
     }
   } else if (hash.startsWith('#weapon/')) {
-    renderWeaponDetail(decodeURIComponent(hash.slice(8)));
+    // Update the button directly in DOM instead of full page re-render
+    const btn = document.getElementById('detail-compare-btn');
+    if (btn && btn.dataset.wkey === wkey) {
+      btn.classList.toggle('active', isAdded);
+      btn.innerHTML = `⚖ ${isAdded ? 'В сравнении' : 'Сравнить'}`;
+    }
   }
 }
 
@@ -365,7 +372,7 @@ function updateCompareWidget() {
 
 function goCompare() {
   if (compareList.length < 2) {
-    alert("Выберите как минимум 2 оружия для сравнения!");
+    showToast("Выберите как минимум 2 оружия для сравнения!", "warning");
     return;
   }
   location.hash = `#compare?w=${compareList.join(',')}`;
@@ -578,7 +585,26 @@ function setupEvents() {
       return;
     }
 
-    // 6. Share detail / Share patch buttons
+    // 6. Detail compare button
+    const detailCompareBtn = e.target.closest('#detail-compare-btn');
+    if (detailCompareBtn) {
+      e.stopPropagation();
+      toggleCompare(detailCompareBtn.dataset.wkey);
+      return;
+    }
+
+    // 7. Clear compare button
+    const clearCompareBtn = e.target.closest('#clear-compare-btn');
+    if (clearCompareBtn) {
+      e.stopPropagation();
+      compareList = [];
+      updateCompareWidget();
+      showToast("Список сравнения сброшен!", "success");
+      renderComparePage();
+      return;
+    }
+
+    // 8. Share detail / Share patch buttons
     const shareDetailBtn = e.target.closest('#share-detail-btn');
     if (shareDetailBtn) {
       e.stopPropagation();
@@ -762,7 +788,7 @@ function renderWeapons() {
 
     if (filters.search) {
       const q = filters.search;
-      return w.family.toLowerCase().includes(q) || w.name.toLowerCase().includes(q);
+      return w.name.toLowerCase().includes(q) || w.file.toLowerCase().includes(q);
     }
     return true;
   });
@@ -1013,6 +1039,16 @@ function renderWeaponCard(w) {
   const baseW = variants.find(v => v.variantType === 'base') || w;
   const baseMainName = parseWeaponName(baseW.name);
 
+  let nameHtml = esc(w.name);
+  let subHtml = esc(`${baseMainName} · ${vtag}`);
+
+  if (filters.search) {
+    const escapedSearch = escapeRegExp(esc(filters.search));
+    const regex = new RegExp(`(${escapedSearch})`, 'gi');
+    nameHtml = nameHtml.replace(regex, '<mark class="search-highlight">$1</mark>');
+    subHtml = subHtml.replace(regex, '<mark class="search-highlight">$1</mark>');
+  }
+
   const statsHtml = STAT_DEFS.map(s => {
     const val = w[s.key];
     const ci = changeIndicatorHtml(family, w.variantType, s.key);
@@ -1064,8 +1100,8 @@ function renderWeaponCard(w) {
           </div>
         </div>
         <div class="card-header-info">
-          <div class="family-name" title="${esc(w.name)}">${w.name}</div>
-          <div class="base-weapon-name" title="${esc(baseMainName)} · ${vtag}">${baseMainName} · ${vtag}</div>
+          <div class="family-name" title="${esc(w.name)}">${nameHtml}</div>
+          <div class="base-weapon-name" title="${esc(baseMainName)} · ${vtag}">${subHtml}</div>
         </div>
       </div>
       <div class="card-divider"></div>
@@ -1234,10 +1270,15 @@ function renderWeaponDetail(wkey) {
     <div class="detail-title-row">
       <span class="detail-title">${currentWeapon.name}</span>
       <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
-      <button id="share-detail-btn" class="share-detail-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-        Поделиться
-      </button>
+      <div class="detail-actions">
+        <button id="detail-compare-btn" class="detail-compare-btn ${compareList.includes(family + ':' + variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${variantType}">
+          ⚖ ${compareList.includes(family + ':' + variantType) ? 'В сравнении' : 'Сравнить'}
+        </button>
+        <button id="share-detail-btn" class="share-detail-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          Поделиться
+        </button>
+      </div>
     </div>
     <div class="detail-meta">
       <span class="variant-tag ${currentWeapon.variantType === 'base' ? 'base' : 'branch'}">${VARIANT_LABELS[currentWeapon.variantType] ?? currentWeapon.variantType}</span>
@@ -1461,10 +1502,15 @@ function renderComparePage() {
     <a class="back-btn" href="#weapons">← К списку оружия</a>
     <div class="detail-title-row" style="margin-bottom: 24px;">
       <span class="detail-title">Сравнение оружия</span>
-      <button id="share-detail-btn" class="share-detail-btn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-        Поделиться
-      </button>
+      <div class="detail-actions">
+        <button id="clear-compare-btn" class="detail-compare-btn" style="border-color: rgba(239, 68, 68, 0.3); color: #ef4444; background: rgba(239, 68, 68, 0.05);">
+          🗑️ Сбросить сравнение
+        </button>
+        <button id="share-detail-btn" class="share-detail-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          Поделиться
+        </button>
+      </div>
     </div>
     <div class="table-scroll-hint">↔ Прокручивайте таблицу вбок для сравнения</div>
     <div class="table-wrapper">
@@ -1720,6 +1766,10 @@ function esc(str) {
     .replace(/>/g, '&gt;');
 }
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function pluralVariant(n) {
   if (n % 10 === 1 && n % 100 !== 11) return 'ветка';
   if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'ветки';
@@ -1745,8 +1795,39 @@ function pluralizeChanges(n) {
 }
 
 
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+
+  let icon = 'ℹ️';
+  if (type === 'success') icon = '✅';
+  if (type === 'warning') icon = '⚠️';
+  if (type === 'error') icon = '❌';
+
+  toast.innerHTML = `
+    <span class="toast-icon">${icon}</span>
+    <span class="toast-message">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation reflow
+  toast.offsetHeight;
+
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
 function copyToClipboard(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
+    showToast('Ссылка скопирована в буфер обмена!', 'success');
     if (btn) {
       const originalText = btn.innerHTML;
       btn.innerHTML = '✓ Ссылка скопирована!';
