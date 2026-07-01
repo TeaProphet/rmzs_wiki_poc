@@ -29,13 +29,13 @@ const AMMO_LABELS = {
 };
 
 const AMMO_COLORS = {
-  '357': '#f87171',
-  'XBowBolt': '#e879f9',
-  'ar2': '#34d399',
-  'buckshot': '#fb923c',
+  '357': '#c2845c',
+  'XBowBolt': '#facc15',
+  'ar2': '#02f7ae',
+  'buckshot': '#ef4444',
   'chemical': '#86efac',
-  'impactmine': '#fbbf24',
-  'pistol': '#94a3b8',
+  'impactmine': '#f97316',
+  'pistol': '#fef08a',
   'pulse': '#818cf8',
   'scrap': '#d6d3d1',
   'smg1': '#60a5fa',
