@@ -311,7 +311,7 @@ function renderFamilyCard({ family, variants, base }) {
         <span class="variants-label">
           ${varCount > 0
             ? `<strong>${varCount}</strong> ${pluralVariant(varCount)}`
-            : 'Нет альтернатив'}
+            : 'Нет веток'}
         </span>
         <span class="card-arrow">Подробнее →</span>
       </div>
@@ -587,9 +587,9 @@ function esc(str) {
 }
 
 function pluralVariant(n) {
-  if (n % 10 === 1 && n % 100 !== 11) return 'альтернатива';
-  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'альтернативы';
-  return 'альтернатив';
+  if (n % 10 === 1 && n % 100 !== 11) return 'ветка';
+  if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'ветки';
+  return 'веток';
 }
 
 function pluralVariantFull(n) {
