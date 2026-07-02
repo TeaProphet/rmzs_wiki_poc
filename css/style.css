@@ -1383,7 +1383,7 @@ a.h-patch-link:active {
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid var(--border);
   color: var(--text-3);
   font-size: 12px;
@@ -1411,7 +1411,7 @@ a.h-patch-link:active {
   justify-content: center;
   width: 24px;
   height: 24px;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid var(--border);
   color: var(--text-3);
   font-size: 13px;

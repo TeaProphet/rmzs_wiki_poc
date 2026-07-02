@@ -48,9 +48,7 @@ function renderAmmoTag(ammoType) {
   const imgUrl = `img/ammo/${ammoType}.png`;
   
   return `
-    <span class="ammo-badge-container" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; border-radius: 6px; border: 1px solid ${color}45; background: ${color}20; flex-shrink:0; vertical-align: middle; box-sizing: border-box !important; padding: 0 !important;" title="Патроны: ${label}">
-      <span class="ammo-icon-mask" style="display: inline-block; width: 16px; height: 16px; background-color: ${color}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></span>
-    </span>
+    <span class="ammo-icon-mask" style="display: inline-block; width: 24px; height: 24px; background-color: ${color}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; vertical-align: middle; flex-shrink:0;" title="Патроны: ${label}"></span>
   `;
 }
 
@@ -866,14 +864,9 @@ function renderWeapons() {
       const isActive = filters.ammos.has(btn.dataset.ammo);
       btn.classList.toggle('active', isActive);
       const ammoClr = AMMO_COLORS[btn.dataset.ammo] ?? '#888';
-      if (isActive) {
-        btn.style.color = ammoClr;
-        btn.style.borderColor = ammoClr;
-        btn.style.background = ammoClr + '26';
-      } else {
-        btn.style.color = '';
-        btn.style.borderColor = '';
-        btn.style.background = '';
+      const iconSpan = btn.querySelector('span');
+      if (iconSpan) {
+        iconSpan.style.backgroundColor = isActive ? ammoClr : '#52525b';
       }
     });
     document.querySelectorAll('[data-sort]').forEach(btn => {
@@ -980,7 +973,7 @@ function renderWeapons() {
           <div class="filter-chips">
             ${allTiers.map(t => {
               const isActive = filters.tiers.has(String(t));
-              const styleAttr = `style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px; font-family:'Rajdhani', sans-serif; font-weight:700; font-size:13px;"`;
+              const styleAttr = `style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:0; font-family:'Rajdhani', sans-serif; font-weight:700; font-size:13px;"`;
               return `
                 <button class="chip${isActive ? ' active' : ''}" data-tier="${t}" ${styleAttr}>T${t}</button>
               `;
@@ -993,25 +986,15 @@ function renderWeapons() {
             ${allAmmos.map(a => {
               const isActive = filters.ammos.has(a);
               const ammoClr = AMMO_COLORS[a] ?? '#888';
-              const styleAttr = isActive 
-                ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px;"` 
-                : 'style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px;"';
-              const iconColor = isActive ? ammoClr : '#a1a1aa';
+              const styleAttr = `style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:none !important; background:transparent !important; box-shadow:none !important; cursor:pointer;"`;
+              const iconColor = isActive ? ammoClr : '#52525b';
               const imgUrl = `img/ammo/${a}.png`;
               return `
                 <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr} title="${AMMO_LABELS[a] ?? a}">
-                  <span style="display: inline-block; width: 18px; height: 18px; background-color: ${iconColor}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></span>
+                  <span style="display: inline-block; width: 34px; height: 34px; background-color: ${iconColor}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; transition: background-color var(--ease);"></span>
                 </button>
               `;
             }).join('')}
-          </div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Параметры</span>
-          <div class="filter-chips">
-            <button class="chip stats-toggle-btn${filters.showStatFilters ? ' active' : ''}">
-              Поиск по характеристикам
-            </button>
           </div>
         </div>
         <div class="filter-group">
@@ -1039,6 +1022,10 @@ function renderWeapons() {
         </div>
       </div>
       <div class="filter-actions-row">
+        <button class="chip stats-toggle-btn${filters.showStatFilters ? ' active' : ''}" style="margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 13px; height: 13px; vertical-align: middle;"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+          Поиск по характеристикам
+        </button>
         <button class="fav-filter-btn${filters.favoritesOnly ? ' active' : ''}">
           ⭐ Только избранное
         </button>
@@ -1145,7 +1132,7 @@ function renderWeaponCard(w) {
             <span class="compare-card-badge ${compareList.includes(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="Сравнить оружие">⚖</span>
           </div>
           <div class="card-tags-right" style="display: flex; gap: 6px; align-items: center;">
-            <span class="tier-badge ${tc(tier)}" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; padding: 0 !important; border-radius: 6px; font-size: 11.5px; font-family: 'Rajdhani', sans-serif; font-weight: 700; box-sizing: border-box !important;">${tl(tier)}</span>
+            <span class="tier-badge ${tc(tier)}" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; padding: 0 !important; border-radius: 0 !important; font-size: 11.5px; font-family: 'Rajdhani', sans-serif; font-weight: 700; box-sizing: border-box !important;">${tl(tier)}</span>
             ${renderAmmoTag(ammo)}
           </div>
         </div>
