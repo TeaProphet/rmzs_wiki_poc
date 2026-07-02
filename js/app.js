@@ -180,18 +180,33 @@ function findWeaponForChange(ch) {
   return candidates[0];
 }
 
+function calcDps(w) {
+  const damage = w.damage || 0;
+  const delay = w.delay || 0;
+  const projCount = w.projectileCount ?? 1;
+  
+  if (delay <= 0) return 0;
+  
+  const reloadVal = w.reload != null ? parseFloat(String(w.reload).replace(',', '.')) : null;
+  const clipVal = w.clipSize != null ? parseInt(w.clipSize, 10) : null;
+  
+  if (reloadVal !== null && !isNaN(reloadVal) && clipVal !== null && !isNaN(clipVal) && clipVal > 0) {
+    const totalDamage = clipVal * damage * projCount;
+    const cycleTime = Math.max(0.001, ((clipVal - 1) * delay) + reloadVal);
+    return Math.round(totalDamage / cycleTime);
+  }
+  
+  return Math.round((damage * projCount) / delay);
+}
+
 function buildChangesIndex() {
   allHistory = {};
   latestChange = {};
 
-  // Calculate initial DPS dynamically based on projectileCount
+  // Calculate initial DPS dynamically using Sustained DPS formula
   for (const w of weaponsData) {
     w.projectileCount = w.projectileCount ?? 1;
-    if (w.damage && w.delay) {
-      w.dps = Math.round((w.damage * w.projectileCount) / w.delay);
-    } else {
-      w.dps = 0;
-    }
+    w.dps = calcDps(w);
   }
 
   // Sort changelog oldest→newest so we can build correct timelines
@@ -211,7 +226,7 @@ function buildChangesIndex() {
       let hasDmgOrDlyChange = false;
 
       for (const [stat, val] of Object.entries(ch.stats)) {
-        if (stat === 'damage' || stat === 'delay') {
+        if (stat === 'damage' || stat === 'delay' || stat === 'clipSize' || stat === 'reload' || stat === 'projectileCount') {
           hasDmgOrDlyChange = true;
         }
 
@@ -229,22 +244,20 @@ function buildChangesIndex() {
         weapon[stat] = newVal;
       }
 
-      // Automatically recalculate and override DPS if damage or delay changed
+      // Automatically recalculate and override DPS if stats influencing DPS changed
       if (hasDmgOrDlyChange) {
-        if (weapon.damage && weapon.delay) {
-          const newDps = Math.round((weapon.damage * weapon.projectileCount) / weapon.delay);
-          const oldDps = weapon.dps;
-          
-          if (newDps !== oldDps) {
-            const key = `${base}:dps`;
-            if (!allHistory[key]) allHistory[key] = [];
+        const newDps = calcDps(weapon);
+        const oldDps = weapon.dps;
+        
+        if (newDps !== oldDps) {
+          const key = `${base}:dps`;
+          if (!allHistory[key]) allHistory[key] = [];
 
-            const entry = { patch: patch.patch, date: patch.date, old: oldDps, new: newDps };
-            allHistory[key].push(entry);
-            latestChange[key] = entry;   // overwrite → keeps the most recent
+          const entry = { patch: patch.patch, date: patch.date, old: oldDps, new: newDps };
+          allHistory[key].push(entry);
+          latestChange[key] = entry;   // overwrite → keeps the most recent
 
-            weapon.dps = newDps;
-          }
+          weapon.dps = newDps;
         }
       }
     }
@@ -1084,10 +1097,10 @@ function renderWeaponCard(w) {
           <span class="info-tooltip-trigger">
             <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
             <span class="info-tooltip-content">
-              <span class="tooltip-title">Формула:</span>
+              <span class="tooltip-title">DPS формула:</span>
               <span class="formula-fraction">
-                <span class="fraction-numerator">Урон × Снарядов за выстрел</span>
-                <span class="fraction-denominator">Задержка</span>
+                <span class="fraction-numerator">Магазин × Урон × Снарядов</span>
+                <span class="fraction-denominator">((Магазин - 1) × Задержка) + Перезарядка</span>
               </span>
             </span>
           </span>
@@ -1236,10 +1249,10 @@ function renderWeaponDetail(wkey) {
           <span class="info-tooltip-trigger">
             <svg class="info-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
             <span class="info-tooltip-content">
-              <span class="tooltip-title">Формула:</span>
+              <span class="tooltip-title">DPS формула:</span>
               <span class="formula-fraction">
-                <span class="fraction-numerator">Урон × Снарядов за выстрел</span>
-                <span class="fraction-denominator">Задержка</span>
+                <span class="fraction-numerator">Магазин × Урон × Снарядов</span>
+                <span class="fraction-denominator">((Магазин - 1) × Задержка) + Перезарядка</span>
               </span>
             </span>
           </span>
