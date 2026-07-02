@@ -9,3 +9,8 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+raw_content
+tools
+.idea
+img/weapon_screenshots

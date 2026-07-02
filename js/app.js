@@ -1115,9 +1115,16 @@ function renderWeaponCard(w) {
             <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12">${ammoLbl}</span>
           </div>
         </div>
-        <div class="card-header-info">
-          <div class="family-name" title="${esc(w.name)}">${nameHtml}</div>
-          <div class="base-weapon-name" title="${esc(baseMainName)} · ${vtag}">${subHtml}</div>
+        <div class="card-header-main">
+          <div class="card-header-info">
+            <div class="family-name" title="${esc(w.name)}">${nameHtml}</div>
+            <div class="base-weapon-name" title="${esc(baseMainName)} · ${vtag}">${subHtml}</div>
+          </div>
+          ${w.image ? `
+            <div class="card-weapon-image-container">
+              <img src="${w.image}" alt="${esc(w.name)}" class="card-weapon-image">
+            </div>
+          ` : ''}
         </div>
       </div>
       <div class="card-divider"></div>

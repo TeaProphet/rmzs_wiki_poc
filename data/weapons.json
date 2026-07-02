@@ -11,7 +11,9 @@
     "tier": 1,
     "reload": 2.32,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null,
+    "description": "Стреляет химическими сгустками, которые игнорируют сопротивление урону цели."
   },
   {
     "family": "Blaster",
@@ -25,7 +27,9 @@
     "tier": 1,
     "reload": 2.02,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_blaster.png",
+    "description": "Базовый дробовик, который наносит существенный урон на ближней дистанции."
   },
   {
     "family": "Blaster",
@@ -39,7 +43,9 @@
     "tier": 1,
     "reload": 0.45,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_blareduct.png",
+    "description": "Это оружие представляет собой кустарный хлам, а точнее однозарядную трубу, стреляющую картечью."
   },
   {
     "family": "Carrion",
@@ -53,7 +59,9 @@
     "tier": 1,
     "reload": 1.67,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null,
+    "description": "Миномет, стреляющий минами натяжного действия, которые прикрепляются к поверхности. Мины можно забрать на ПКМ. Мины не взрываются, а выстреливают пулю, которая имеет повышенный урон."
   },
   {
     "family": "Owens",
@@ -67,7 +75,9 @@
     "tier": 1,
     "reload": 2.6,
     "ammo": "pistol",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": "img/weapons/weapon_zs_owens.png",
+    "description": "Пистолет с посредственной точностью, стреляющий двумя пулями с приличным уроном."
   },
   {
     "family": "Owens",
@@ -81,7 +91,9 @@
     "tier": 1,
     "reload": null,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_peashooter.png",
+    "description": "Пистолет с низким уроном, который использует только половину боеприпасов."
   },
   {
     "family": "Owens",
@@ -95,7 +107,9 @@
     "tier": 1,
     "reload": null,
     "ammo": "pistol",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": "img/weapons/weapon_zs_owens.png",
+    "description": "Точный, надежный пистолет со значительным уроном."
   },
   {
     "family": "Slinger",
@@ -109,7 +123,9 @@
     "tier": 1,
     "reload": 1.72,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_slinger.png",
+    "description": "Пистолет-болтовик с медленной перезарядкой, низкой точностью, но высоким уроном."
   },
   {
     "family": "Z9000",
@@ -123,7 +139,9 @@
     "tier": 1,
     "reload": 1.53,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_z9000.png",
+    "description": "Хоть Z9000 и не наносит большой урон, но его энергетические патроны замедляют зомби. Нажмите Q, чтобы сменить режим стрельбы."
   },
   {
     "family": "Crackler",
@@ -137,7 +155,9 @@
     "tier": 1,
     "reload": 3.37,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_crackler.png",
+    "description": "Первоначальная штурмовая винтовка с хорошей точностью и уроном."
   },
   {
     "family": "Crackler",
@@ -151,7 +171,9 @@
     "tier": 1,
     "reload": 3.37,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_crackler.png",
+    "description": "Первоначальная штурмовая винтовка с хорошей точностью и уроном."
   },
   {
     "family": "Crackler",
@@ -165,7 +187,9 @@
     "tier": 1,
     "reload": 0.9,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_crackler.png",
+    "description": "Скорострельная самопальная винтовка, стреляющая трассерами. Ввиду своей во всех смыслах ущербной конструкции постоянно клинит. Подзарядка способностей влияет на шанс осечки."
   },
   {
     "family": "Shredder",
@@ -179,7 +203,9 @@
     "tier": 1,
     "reload": 3.29,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_smg.png",
+    "description": "Простое СМГ оружие, способное наносить значительный урон, за который вы заплатите точностью на дальних дистанциях."
   },
   {
     "family": "Simon",
@@ -193,7 +219,9 @@
     "tier": 1,
     "reload": 5.88,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_mr96.png",
+    "description": "Небольшой револьвер, имеет очень неплохой урон в ущерб своей скорости перезарядки. При полном улучшении патронташа скорость перезарядки будет значительно увеличена."
   },
   {
     "family": "Stubber",
@@ -207,7 +235,9 @@
     "tier": 1,
     "reload": 3,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null,
+    "description": "Базовая снайперская винтовка, способная нанести хороший урон в голову."
   },
   {
     "family": "Bayonet",
@@ -221,7 +251,8 @@
     "tier": 2,
     "reload": 3,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_stabber.png"
   },
   {
     "family": "Bayonet",
@@ -235,7 +266,8 @@
     "tier": 2,
     "reload": 3,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_stabber.png"
   },
   {
     "family": "Murka",
@@ -249,7 +281,8 @@
     "tier": 2,
     "reload": 2.16,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_mp153.png"
   },
   {
     "family": "Murka",
@@ -263,7 +296,8 @@
     "tier": 2,
     "reload": 2.11,
     "ammo": "buckshot",
-    "projectileCount": 7
+    "projectileCount": 7,
+    "image": "img/weapons/weapon_zs_fracture.png"
   },
   {
     "family": "Thumper",
@@ -277,7 +311,8 @@
     "tier": 2,
     "reload": null,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_thumper.png"
   },
   {
     "family": "Eraser",
@@ -291,7 +326,8 @@
     "tier": 2,
     "reload": 2.57,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_eraser.png"
   },
   {
     "family": "Eraser",
@@ -305,7 +341,8 @@
     "tier": 2,
     "reload": null,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_berettam9.png"
   },
   {
     "family": "Eraser",
@@ -319,7 +356,8 @@
     "tier": 2,
     "reload": 1,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_waraxe.png"
   },
   {
     "family": "Amigo",
@@ -333,7 +371,8 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_amigo.png"
   },
   {
     "family": "Amigo",
@@ -347,7 +386,8 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_amigo.png"
   },
   {
     "family": "Amigo",
@@ -361,7 +401,8 @@
     "tier": 2,
     "reload": 0.9,
     "ammo": "ar2",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": "img/weapons/weapon_zs_amigo.png"
   },
   {
     "family": "Splinter",
@@ -375,7 +416,8 @@
     "tier": 2,
     "reload": 2.8,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_sawedoff.png"
   },
   {
     "family": "Ricochete",
@@ -389,7 +431,8 @@
     "tier": 2,
     "reload": 3,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_magnum.png"
   },
   {
     "family": "Ricochete",
@@ -403,7 +446,8 @@
     "tier": 2,
     "reload": 3,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_magnum.png"
   },
   {
     "family": "Crossfire",
@@ -417,7 +461,8 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": null
   },
   {
     "family": "Crossfire",
@@ -431,7 +476,8 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": null
   },
   {
     "family": "Crossfire",
@@ -445,7 +491,8 @@
     "tier": 2,
     "reload": 1.87,
     "ammo": "pistol",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": null
   },
   {
     "family": "Inquisitor",
@@ -459,7 +506,8 @@
     "tier": 2,
     "reload": 0.6,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_inquisitor.png"
   },
   {
     "family": "Inquisitor",
@@ -473,7 +521,8 @@
     "tier": 2,
     "reload": 0.6,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_inquisitor.png"
   },
   {
     "family": "Annabelle",
@@ -487,7 +536,8 @@
     "tier": 2,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_annabelle.png"
   },
   {
     "family": "Annabelle",
@@ -501,7 +551,8 @@
     "tier": 2,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_kar98.png"
   },
   {
     "family": "Nova Blaster",
@@ -515,7 +566,8 @@
     "tier": 2,
     "reload": 3.67,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_novablaster.png"
   },
   {
     "family": "Nova Blaster",
@@ -529,7 +581,8 @@
     "tier": 2,
     "reload": 3.8,
     "ammo": "pulse",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": "img/weapons/weapon_zs_novablaster.png"
   },
   {
     "family": "Nova Blaster",
@@ -543,7 +596,8 @@
     "tier": 2,
     "reload": 3.67,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_novablaster.png"
   },
   {
     "family": "Sprayer",
@@ -557,7 +611,8 @@
     "tier": 2,
     "reload": 3.17,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_uzi.png"
   },
   {
     "family": "Sprayer",
@@ -571,7 +626,8 @@
     "tier": 2,
     "reload": 3.17,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_uzi.png"
   },
   {
     "family": "Charon",
@@ -585,7 +641,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_charon.png"
   },
   {
     "family": "Charon",
@@ -599,7 +656,8 @@
     "tier": 3,
     "reload": 0.62,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_avelyn.png"
   },
   {
     "family": "Charon",
@@ -613,7 +671,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_charon.png"
   },
   {
     "family": "Oberon",
@@ -627,7 +686,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 5
+    "projectileCount": 5,
+    "image": "img/weapons/weapon_zs_oberon.png"
   },
   {
     "family": "Oberon",
@@ -641,7 +701,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_oberon.png"
   },
   {
     "family": "Akbar",
@@ -655,7 +716,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_akbar.png"
   },
   {
     "family": "Hyena",
@@ -669,7 +731,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_hyena.png"
   },
   {
     "family": "Rebel",
@@ -683,7 +746,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_rebel.png"
   },
   {
     "family": "Rebel",
@@ -697,7 +761,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_rebel.png"
   },
   {
     "family": "Ender",
@@ -711,7 +776,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ender.png"
   },
   {
     "family": "Ruger",
@@ -725,7 +791,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ruger.png"
   },
   {
     "family": "Tempest",
@@ -739,7 +806,8 @@
     "tier": 3,
     "reload": 1.08,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_tempest.png"
   },
   {
     "family": "Tempest",
@@ -753,7 +821,8 @@
     "tier": 3,
     "reload": 1.08,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_tempest.png"
   },
   {
     "family": "Tempest",
@@ -767,7 +836,8 @@
     "tier": 3,
     "reload": 1.2,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_savior.png"
   },
   {
     "family": "Tosser",
@@ -781,7 +851,8 @@
     "tier": 3,
     "reload": 0.66,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Tosser",
@@ -795,7 +866,8 @@
     "tier": 3,
     "reload": 0.66,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Tosser",
@@ -809,7 +881,8 @@
     "tier": 3,
     "reload": 0.95,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_proliferator.png"
   },
   {
     "family": "Silencer",
@@ -823,7 +896,8 @@
     "tier": 3,
     "reload": 0.8,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Silencer",
@@ -837,7 +911,8 @@
     "tier": 3,
     "reload": 0.723,
     "ammo": "smg1",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": "img/weapons/weapon_zs_steyr.png"
   },
   {
     "family": "Zombie Drill",
@@ -851,7 +926,8 @@
     "tier": 3,
     "reload": 1.95,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_deagle.png"
   },
   {
     "family": "Zombie Drill",
@@ -865,7 +941,8 @@
     "tier": 3,
     "reload": 2.2,
     "ammo": "pulse",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": "img/weapons/weapon_zs_deagle.png"
   },
   {
     "family": "Zombie Drill",
@@ -879,7 +956,8 @@
     "tier": 3,
     "reload": 1.95,
     "ammo": "pistol",
-    "projectileCount": 2
+    "projectileCount": 2,
+    "image": "img/weapons/weapon_zs_deagle.png"
   },
   {
     "family": "Pollutor",
@@ -893,7 +971,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_pollutor.png"
   },
   {
     "family": "Hunter",
@@ -907,7 +986,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_hunter.png"
   },
   {
     "family": "Heckler",
@@ -921,7 +1001,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Onyx",
@@ -935,7 +1016,8 @@
     "tier": 3,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_onyx.png"
   },
   {
     "family": "Quasar",
@@ -949,7 +1031,8 @@
     "tier": 4,
     "reload": 1.05,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_quasar.png"
   },
   {
     "family": "Quasar",
@@ -963,7 +1046,8 @@
     "tier": 4,
     "reload": 1.05,
     "ammo": "pulse",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": "img/weapons/weapon_zs_quasar.png"
   },
   {
     "family": "Sweeper",
@@ -977,7 +1061,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_ze_sweepershotgun.png"
   },
   {
     "family": "Sweeper",
@@ -991,7 +1076,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_ze_sweepershotgun.png"
   },
   {
     "family": "Headhunter",
@@ -1005,7 +1091,8 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_headhunter.png"
   },
   {
     "family": "Headhunter",
@@ -1019,7 +1106,8 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_headhunter.png"
   },
   {
     "family": "Headhunter",
@@ -1033,7 +1121,8 @@
     "tier": 4,
     "reload": 0.9,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_headhunter.png"
   },
   {
     "family": "Quicksilver",
@@ -1047,7 +1136,8 @@
     "tier": 4,
     "reload": 1.2,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Quicksilver",
@@ -1061,7 +1151,8 @@
     "tier": 4,
     "reload": 1.2,
     "ammo": "357",
-    "projectileCount": 6
+    "projectileCount": 6,
+    "image": null
   },
   {
     "family": "Corrode",
@@ -1075,7 +1166,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Shtormbreaker",
@@ -1089,7 +1181,8 @@
     "tier": 4,
     "reload": 0.92,
     "ammo": "buckshot",
-    "projectileCount": 6
+    "projectileCount": 6,
+    "image": "img/weapons/weapon_zs_sv10.png"
   },
   {
     "family": "Artemis",
@@ -1103,7 +1196,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_artemis.png"
   },
   {
     "family": "Artemis",
@@ -1117,7 +1211,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_artemis.png"
   },
   {
     "family": "Barrage",
@@ -1131,7 +1226,8 @@
     "tier": 4,
     "reload": 0.8,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_barrage.png"
   },
   {
     "family": "Reaper",
@@ -1145,7 +1241,8 @@
     "tier": 4,
     "reload": 1.15,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_reaper.png"
   },
   {
     "family": "Stalker",
@@ -1159,7 +1256,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_m4.png"
   },
   {
     "family": "Stalker",
@@ -1173,7 +1271,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": "img/weapons/weapon_zs_aspirant.png"
   },
   {
     "family": "Tiny",
@@ -1187,7 +1286,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_slugrifle.png"
   },
   {
     "family": "Tiny",
@@ -1201,7 +1301,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_slugrifle.png"
   },
   {
     "family": "Long Arm",
@@ -1215,7 +1316,8 @@
     "tier": 4,
     "reload": 0.85,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_longarm.png"
   },
   {
     "family": "Long Arm",
@@ -1229,7 +1331,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_hm500.png"
   },
   {
     "family": "Inferno",
@@ -1243,7 +1346,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_inferno.png"
   },
   {
     "family": "Bullet Storm",
@@ -1257,7 +1361,8 @@
     "tier": 4,
     "reload": null,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_bulletstorm.png"
   },
   {
     "family": "Bullet Storm",
@@ -1271,7 +1376,8 @@
     "tier": 4,
     "reload": 0.94,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_bulletstorm.png"
   },
   {
     "family": "Bizon",
@@ -1285,7 +1391,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_bizon.png"
   },
   {
     "family": "Bizon",
@@ -1299,7 +1406,8 @@
     "tier": 5,
     "reload": 1.2,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_bizon.png"
   },
   {
     "family": "Renegade",
@@ -1313,7 +1421,8 @@
     "tier": 5,
     "reload": 1.08,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_renegade.png"
   },
   {
     "family": "Renegade",
@@ -1327,7 +1436,8 @@
     "tier": 5,
     "reload": 1.15,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_renegade.png"
   },
   {
     "family": "Malorian Arms 3516",
@@ -1341,7 +1451,8 @@
     "tier": 5,
     "reload": 0.78,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_novacolt.png"
   },
   {
     "family": "IMk Plasma Projector",
@@ -1355,7 +1466,8 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "IMk Plasma Projector",
@@ -1369,7 +1481,8 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "projectileCount": 5
+    "projectileCount": 5,
+    "image": null
   },
   {
     "family": "IMk Plasma Projector",
@@ -1383,7 +1496,8 @@
     "tier": 5,
     "reload": 1,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Broadside",
@@ -1397,7 +1511,8 @@
     "tier": 5,
     "reload": 0.74,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_broadside.png"
   },
   {
     "family": "Scattershot",
@@ -1411,7 +1526,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_spas12.png"
   },
   {
     "family": "Scattershot",
@@ -1425,7 +1541,8 @@
     "tier": 5,
     "reload": "1.25X",
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_spas12.png"
   },
   {
     "family": "Blitzo",
@@ -1439,7 +1556,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Smelter",
@@ -1453,7 +1571,8 @@
     "tier": 5,
     "reload": 0.45,
     "ammo": "scrap",
-    "projectileCount": 7
+    "projectileCount": 7,
+    "image": null
   },
   {
     "family": "Smelter",
@@ -1467,7 +1586,8 @@
     "tier": 5,
     "reload": 0.64,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ripper.png"
   },
   {
     "family": "Terminus",
@@ -1481,7 +1601,8 @@
     "tier": 5,
     "reload": 0.82,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_scar.png"
   },
   {
     "family": "Terminus",
@@ -1495,7 +1616,8 @@
     "tier": 5,
     "reload": 0.9,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_fal.png"
   },
   {
     "family": "ASMD",
@@ -1509,7 +1631,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_asmd.png"
   },
   {
     "family": "Jackhammer",
@@ -1523,7 +1646,8 @@
     "tier": 5,
     "reload": 0.62,
     "ammo": "buckshot",
-    "projectileCount": 9
+    "projectileCount": 9,
+    "image": "img/weapons/weapon_zs_jackhammer.png"
   },
   {
     "family": "Impaler",
@@ -1537,7 +1661,8 @@
     "tier": 5,
     "reload": 0.85,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Adonis",
@@ -1551,7 +1676,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Adonis",
@@ -1565,7 +1691,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Adonis",
@@ -1579,7 +1706,8 @@
     "tier": 5,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 25
+    "projectileCount": 25,
+    "image": null
   },
   {
     "family": "Deathdealers",
@@ -1593,7 +1721,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_deathdealers.png"
   },
   {
     "family": "Deathdealers",
@@ -1607,7 +1736,8 @@
     "tier": 6,
     "reload": 0.75,
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ks23.png"
   },
   {
     "family": "Deathdealers",
@@ -1621,7 +1751,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "buckshot",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_aa12.png"
   },
   {
     "family": "Zeus",
@@ -1635,7 +1766,8 @@
     "tier": 6,
     "reload": 0.78,
     "ammo": "XBowBolt",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_zeus.png"
   },
   {
     "family": "Bulwark",
@@ -1649,7 +1781,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Bulwark",
@@ -1663,7 +1796,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Bulwark",
@@ -1677,7 +1811,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "smg1",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": null
   },
   {
     "family": "Enforcers",
@@ -1691,7 +1826,8 @@
     "tier": 6,
     "reload": 1.1,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_enforcers.png"
   },
   {
     "family": "Enforcers",
@@ -1705,7 +1841,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pistol",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_v1.png"
   },
   {
     "family": "Glukhar",
@@ -1719,7 +1856,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "357",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ash12.png"
   },
   {
     "family": "Glukhar",
@@ -1733,7 +1871,8 @@
     "tier": 6,
     "reload": 0.888,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_ak103.png"
   },
   {
     "family": "Colossus",
@@ -1747,7 +1886,8 @@
     "tier": 6,
     "reload": 1,
     "ammo": "357",
-    "projectileCount": 3
+    "projectileCount": 3,
+    "image": "img/weapons/weapon_zs_colossus.png"
   },
   {
     "family": "Spinfusor",
@@ -1761,7 +1901,8 @@
     "tier": 6,
     "reload": 0.82,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_spinfusor.png"
   },
   {
     "family": "Spinfusor",
@@ -1775,7 +1916,8 @@
     "tier": 6,
     "reload": 1.1,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_wunderwaffe.png"
   },
   {
     "family": "Interceptor",
@@ -1789,7 +1931,8 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_interceptor.png"
   },
   {
     "family": "Interceptor",
@@ -1803,7 +1946,8 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_interceptor.png"
   },
   {
     "family": "Interceptor",
@@ -1817,7 +1961,8 @@
     "tier": 6,
     "reload": 1.35,
     "ammo": "chemical",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_interceptor.png"
   },
   {
     "family": "Juggernaut",
@@ -1831,7 +1976,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": null
   },
   {
     "family": "Juggernaut",
@@ -1845,7 +1991,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "ar2",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_browning.png"
   },
   {
     "family": "Juggernaut",
@@ -1859,7 +2006,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_lmg.png"
   },
   {
     "family": "XVL1456",
@@ -1873,7 +2021,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_taucannon.png"
   },
   {
     "family": "XVL1456",
@@ -1887,7 +2036,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_taucannon.png"
   },
   {
     "family": "Helios",
@@ -1901,7 +2051,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_gluon2.png"
   },
   {
     "family": "Helios",
@@ -1915,7 +2066,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_gluon2.png"
   },
   {
     "family": "Helios",
@@ -1929,7 +2081,8 @@
     "tier": 6,
     "reload": null,
     "ammo": "pulse",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_ze_gluon2.png"
   },
   {
     "family": "Thruster",
@@ -1943,7 +2096,8 @@
     "tier": 6,
     "reload": 0.53,
     "ammo": "impactmine",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_thruster.png"
   },
   {
     "family": "Vector",
@@ -1957,6 +2111,7 @@
     "tier": 6,
     "reload": 0.89,
     "ammo": "smg1",
-    "projectileCount": 1
+    "projectileCount": 1,
+    "image": "img/weapons/weapon_zs_vector.png"
   }
 ]
