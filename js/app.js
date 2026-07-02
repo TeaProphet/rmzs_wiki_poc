@@ -41,6 +41,19 @@ const AMMO_COLORS = {
   'smg1': '#60a5fa',
 };
 
+function renderAmmoTag(ammoType) {
+  if (!ammoType) return '';
+  const label = AMMO_LABELS[ammoType] ?? ammoType;
+  const color = AMMO_COLORS[ammoType] ?? '#888';
+  const imgUrl = `img/ammo/${ammoType}.png`;
+  
+  return `
+    <span class="ammo-badge-container" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; border-radius: 6px; border: 1px solid ${color}45; background: ${color}20; flex-shrink:0; vertical-align: middle; box-sizing: border-box !important; padding: 0 !important;" title="Патроны: ${label}">
+      <span class="ammo-icon-mask" style="display: inline-block; width: 16px; height: 16px; background-color: ${color}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></span>
+    </span>
+  `;
+}
+
 const VARIANT_LABELS = {
   'base': 'Базовое',
   'branch_1': 'Ветка 1',
@@ -965,9 +978,13 @@ function renderWeapons() {
         <div class="filter-group">
           <span class="filter-label">Тир</span>
           <div class="filter-chips">
-            ${allTiers.map(t => `
-              <button class="chip${filters.tiers.has(String(t)) ? ' active' : ''}" data-tier="${t}">T${t}</button>
-            `).join('')}
+            ${allTiers.map(t => {
+              const isActive = filters.tiers.has(String(t));
+              const styleAttr = `style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px; font-family:'Rajdhani', sans-serif; font-weight:700; font-size:13px;"`;
+              return `
+                <button class="chip${isActive ? ' active' : ''}" data-tier="${t}" ${styleAttr}>T${t}</button>
+              `;
+            }).join('')}
           </div>
         </div>
         <div class="filter-group">
@@ -976,10 +993,14 @@ function renderWeapons() {
             ${allAmmos.map(a => {
               const isActive = filters.ammos.has(a);
               const ammoClr = AMMO_COLORS[a] ?? '#888';
-              const styleAttr = isActive ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26;"` : '';
+              const styleAttr = isActive 
+                ? `style="color: ${ammoClr}; border-color: ${ammoClr}; background: ${ammoClr}26; display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px;"` 
+                : 'style="display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border-radius:8px;"';
+              const iconColor = isActive ? ammoClr : '#a1a1aa';
+              const imgUrl = `img/ammo/${a}.png`;
               return `
-                <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr}>
-                  ${AMMO_LABELS[a] ?? a}
+                <button class="chip${isActive ? ' active' : ''}" data-ammo="${a}" ${styleAttr} title="${AMMO_LABELS[a] ?? a}">
+                  <span style="display: inline-block; width: 18px; height: 18px; background-color: ${iconColor}; -webkit-mask-image: url('${imgUrl}'); mask-image: url('${imgUrl}'); -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;"></span>
                 </button>
               `;
             }).join('')}
@@ -1123,9 +1144,9 @@ function renderWeaponCard(w) {
             <span class="fav-card-badge ${favorites.has(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="В избранное">${favorites.has(family + ':' + w.variantType) ? '★' : '☆'}</span>
             <span class="compare-card-badge ${compareList.includes(family + ':' + w.variantType) ? 'active' : ''}" data-wkey="${esc(family)}:${w.variantType}" title="Сравнить оружие">⚖</span>
           </div>
-          <div class="card-tags-right">
-            <span class="tier-badge ${tc(tier)}">${tl(tier)}</span>
-            <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12">${ammoLbl}</span>
+          <div class="card-tags-right" style="display: flex; gap: 6px; align-items: center;">
+            <span class="tier-badge ${tc(tier)}" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; padding: 0 !important; border-radius: 6px; font-size: 11.5px; font-family: 'Rajdhani', sans-serif; font-weight: 700; box-sizing: border-box !important;">${tl(tier)}</span>
+            ${renderAmmoTag(ammo)}
           </div>
         </div>
         <div class="card-header-main">
@@ -1195,7 +1216,7 @@ function renderWeaponDetail(wkey) {
           <a href="#weapon/${encodeURIComponent(v.family + ':' + v.variantType)}" class="col-weapon-name">${v.name}</a>
           <div class="col-badges">
             <span class="variant-tag ${isBase ? 'base' : 'branch'}">${vtag}</span>
-            <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:9px">${ammoLbl}</span>
+            ${renderAmmoTag(v.ammo, true)}
           </div>
         </div>
       </th>`;
@@ -1324,8 +1345,7 @@ function renderWeaponDetail(wkey) {
     }
     
     // Ammo
-    const ammoLabel = AMMO_LABELS[currentWeapon.ammo] ?? currentWeapon.ammo;
-    rows.push(`<tr><td><div class="row-label">Боеприпасы</div></td><td><div class="table-stat">${ammoLabel ?? '—'}</div></td></tr>`);
+    rows.push(`<tr><td><div class="row-label">Боеприпасы</div></td><td><div class="table-stat">${renderAmmoTag(currentWeapon.ammo, true)}</div></td></tr>`);
     
     // File/Classname
     rows.push(`<tr><td><div class="row-label">Файл</div></td><td><span class="file-name">${currentWeapon.file}</span></td></tr>`);
@@ -1378,7 +1398,7 @@ function renderWeaponDetail(wkey) {
       <span class="dot">·</span>
       <span>Семейство: <strong>${family}</strong></span>
       <span class="dot">·</span>
-      <span>${AMMO_LABELS[currentWeapon.ammo] ?? currentWeapon.ammo}</span>
+      ${renderAmmoTag(currentWeapon.ammo, true)}
       ${patchTag ? `<span class="dot">·</span>${patchTag}` : ''}
     </div>
     <div class="weapon-info-block">
@@ -1548,7 +1568,7 @@ function renderComparePage() {
           <a href="#weapon/${encodeURIComponent(w.family + ':' + w.variantType)}" class="compare-weapon-name">${w.name}</a>
           <div style="margin-top: 4px; display: flex; gap: 6px; justify-content: center; align-items: center;">
             <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">${tl(w.tier)}</span>
-            <span class="ammo-badge" style="color:${ammoClr};border-color:${ammoClr}30;background:${ammoClr}12;font-size:8px;padding:1px 4px;">${ammoLbl}</span>
+            ${renderAmmoTag(w.ammo, true)}
           </div>
           <button class="compare-remove-header-btn" data-wkey="${esc(w.family)}:${w.variantType}">Убрать</button>
         </div>

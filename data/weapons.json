@@ -12,7 +12,7 @@
     "reload": 2.32,
     "ammo": "chemical",
     "projectileCount": 1,
-    "image": null,
+    "image": "img/weapons/weapon_zs_chempistol.png",
     "description": "Стреляет химическими сгустками, которые игнорируют сопротивление урону цели."
   },
   {
@@ -60,7 +60,7 @@
     "reload": 1.67,
     "ammo": "impactmine",
     "projectileCount": 1,
-    "image": null,
+    "image": "img/weapons/weapon_zs_minelayer_laser.png",
     "description": "Миномет, стреляющий минами натяжного действия, которые прикрепляются к поверхности. Мины можно забрать на ПКМ. Мины не взрываются, а выстреливают пулю, которая имеет повышенный урон."
   },
   {
@@ -188,7 +188,7 @@
     "reload": 0.9,
     "ammo": "ar2",
     "projectileCount": 1,
-    "image": "img/weapons/weapon_zs_crackler.png",
+    "image": "img/weapons/weapon_zs_bastard.png",
     "description": "Скорострельная самопальная винтовка, стреляющая трассерами. Ввиду своей во всех смыслах ущербной конструкции постоянно клинит. Подзарядка способностей влияет на шанс осечки."
   },
   {
@@ -236,7 +236,7 @@
     "reload": 3,
     "ammo": "357",
     "projectileCount": 1,
-    "image": null,
+    "image": "img/weapons/weapon_zs_stubber.png",
     "description": "Базовая снайперская винтовка, способная нанести хороший урон в голову."
   },
   {
@@ -462,7 +462,7 @@
     "reload": 1.87,
     "ammo": "pistol",
     "projectileCount": 3,
-    "image": null
+    "image": "img/weapons/weapon_zs_glock3.png"
   },
   {
     "family": "Crossfire",
@@ -477,7 +477,7 @@
     "reload": 1.87,
     "ammo": "pistol",
     "projectileCount": 2,
-    "image": null
+    "image": "img/weapons/weapon_zs_glock3.png"
   },
   {
     "family": "Crossfire",
@@ -492,7 +492,7 @@
     "reload": 1.87,
     "ammo": "pistol",
     "projectileCount": 3,
-    "image": null
+    "image": "img/weapons/weapon_zs_glock3.png"
   },
   {
     "family": "Inquisitor",
@@ -852,7 +852,7 @@
     "reload": 0.66,
     "ammo": "smg1",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_tosser.png"
   },
   {
     "family": "Tosser",
@@ -867,7 +867,7 @@
     "reload": 0.66,
     "ammo": "smg1",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_tosser.png"
   },
   {
     "family": "Tosser",
@@ -897,7 +897,7 @@
     "reload": 0.8,
     "ammo": "smg1",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_ze_silencer.png"
   },
   {
     "family": "Silencer",
@@ -1002,7 +1002,7 @@
     "reload": null,
     "ammo": "impactmine",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_grenadelauncher.png"
   },
   {
     "family": "Onyx",
@@ -1137,7 +1137,7 @@
     "reload": 1.2,
     "ammo": "357",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_quicksilver.png"
   },
   {
     "family": "Quicksilver",
@@ -1152,7 +1152,7 @@
     "reload": 1.2,
     "ammo": "357",
     "projectileCount": 6,
-    "image": null
+    "image": "img/weapons/weapon_zs_quicksilver.png"
   },
   {
     "family": "Corrode",
@@ -1167,7 +1167,7 @@
     "reload": null,
     "ammo": "chemical",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_acidsmg.png"
   },
   {
     "family": "Shtormbreaker",
@@ -1467,7 +1467,7 @@
     "reload": 1,
     "ammo": "chemical",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_plasmarifle.png"
   },
   {
     "family": "IMk Plasma Projector",
@@ -1482,7 +1482,7 @@
     "reload": 1,
     "ammo": "chemical",
     "projectileCount": 5,
-    "image": null
+    "image": "img/weapons/weapon_zs_plasmarifle.png"
   },
   {
     "family": "IMk Plasma Projector",
@@ -1497,7 +1497,7 @@
     "reload": 1,
     "ammo": "chemical",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_plasmarifle.png"
   },
   {
     "family": "Broadside",
@@ -1557,7 +1557,7 @@
     "reload": null,
     "ammo": "ar2",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_blitzo_v2.png"
   },
   {
     "family": "Smelter",
@@ -1572,7 +1572,7 @@
     "reload": 0.45,
     "ammo": "scrap",
     "projectileCount": 7,
-    "image": null
+    "image": "img/weapons/weapon_zs_smelter.png"
   },
   {
     "family": "Smelter",
@@ -1662,7 +1662,7 @@
     "reload": 0.85,
     "ammo": "XBowBolt",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_crossbow.png"
   },
   {
     "family": "Adonis",
@@ -1677,7 +1677,7 @@
     "reload": null,
     "ammo": "pulse",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_ze_pulserifle.png"
   },
   {
     "family": "Adonis",
@@ -1692,7 +1692,7 @@
     "reload": null,
     "ammo": "pulse",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_servitor.png"
   },
   {
     "family": "Adonis",
@@ -1707,7 +1707,7 @@
     "reload": null,
     "ammo": "pulse",
     "projectileCount": 25,
-    "image": null
+    "image": "img/weapons/weapon_zs_servitor.png"
   },
   {
     "family": "Deathdealers",
@@ -1782,7 +1782,7 @@
     "reload": null,
     "ammo": "smg1",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_minigun.png"
   },
   {
     "family": "Bulwark",
@@ -1797,7 +1797,7 @@
     "reload": null,
     "ammo": "smg1",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_minigun.png"
   },
   {
     "family": "Bulwark",
@@ -1812,7 +1812,7 @@
     "reload": null,
     "ammo": "smg1",
     "projectileCount": 3,
-    "image": null
+    "image": "img/weapons/weapon_zs_minigun.png"
   },
   {
     "family": "Enforcers",
@@ -1977,7 +1977,7 @@
     "reload": null,
     "ammo": "ar2",
     "projectileCount": 1,
-    "image": null
+    "image": "img/weapons/weapon_zs_juggernaut.png"
   },
   {
     "family": "Juggernaut",

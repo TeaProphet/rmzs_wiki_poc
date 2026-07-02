@@ -683,6 +683,9 @@ body {
   border: 1px solid;
   white-space: nowrap;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .card-divider { height: 1px; background: var(--border); margin: 0 16px; }
@@ -1378,12 +1381,12 @@ a.h-patch-link:active {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--r-sm);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   color: var(--text-3);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
   transition: all var(--ease);
@@ -1406,12 +1409,12 @@ a.h-patch-link:active {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--r-sm);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   border: 1px solid var(--border);
   color: var(--text-3);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.02);
   transition: all var(--ease);
