@@ -1282,6 +1282,63 @@ function renderWeaponDetail(wkey) {
       }).join('')}
     </tr>`;
 
+  // For single variant family, render static characteristics table
+  let singleStatsHtml = '';
+  if (variants.length === 1) {
+    const rows = [];
+    
+    // Damage
+    rows.push(`<tr><td><div class="row-label">Урон</div></td><td><div class="table-stat">${currentWeapon.damage ?? '—'}</div></td></tr>`);
+    
+    // DPS
+    const dpsVal = currentWeapon.dps ?? '—';
+    rows.push(`<tr><td><div class="row-label">DPS</div></td><td><div class="table-stat">${dpsVal}</div></td></tr>`);
+    
+    // Clip size
+    rows.push(`<tr><td><div class="row-label">Магазин</div></td><td><div class="table-stat">${currentWeapon.clipSize ?? '—'}</div></td></tr>`);
+    
+    // Delay
+    const delayVal = currentWeapon.delay != null ? `${currentWeapon.delay} с` : '—';
+    rows.push(`<tr><td><div class="row-label">Задержка</div></td><td><div class="table-stat">${delayVal}</div></td></tr>`);
+    
+    // Reload
+    const reloadVal = currentWeapon.reload != null ? `${currentWeapon.reload} с` : '—';
+    rows.push(`<tr><td><div class="row-label">Перезарядка</div></td><td><div class="table-stat">${reloadVal}</div></td></tr>`);
+    
+    // Projectiles (only if > 1)
+    if (currentWeapon.projectileCount && currentWeapon.projectileCount > 1) {
+      rows.push(`<tr><td><div class="row-label">Кол-во снарядов за выстрел</div></td><td><div class="table-stat">${currentWeapon.projectileCount}</div></td></tr>`);
+    }
+    
+    // Ammo
+    const ammoLabel = AMMO_LABELS[currentWeapon.ammo] ?? currentWeapon.ammo;
+    rows.push(`<tr><td><div class="row-label">Боеприпасы</div></td><td><div class="table-stat">${ammoLabel ?? '—'}</div></td></tr>`);
+    
+    // File/Classname
+    rows.push(`<tr><td><div class="row-label">Файл</div></td><td><span class="file-name">${currentWeapon.file}</span></td></tr>`);
+    
+    singleStatsHtml = `
+      <div class="detail-single-stats-section" style="margin-top: 32px; margin-bottom: 32px;">
+        <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">
+          Характеристики оружия
+        </h3>
+        <div class="table-wrapper" style="max-width: 450px;">
+          <table class="comparison-table" style="min-width: auto;">
+            <thead>
+              <tr>
+                <th style="width: 50%;">Характеристика</th>
+                <th style="width: 50%;">Значение</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows.join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
   const patchTag = latestPatch
     ? `<span class="detail-patch-tag">${latestPatch.patch}</span>
        <span class="dot">·</span>
@@ -1356,7 +1413,7 @@ function renderWeaponDetail(wkey) {
         </div>
         ${renderStatsVisualization(variants, 'Визуальное сравнение веток', variantType)}
       </div>
-    ` : ''}
+    ` : singleStatsHtml}
     
     <div class="detail-changelog-section" style="margin-top: 40px;">
       <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">
