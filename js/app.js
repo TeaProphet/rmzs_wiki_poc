@@ -1199,11 +1199,14 @@ function renderWeaponDetail(wkey) {
     const vtag = VARIANT_LABELS[v.variantType] ?? v.variantType;
     return `
       <th class="${isCurrent ? 'active-col-header' : ''}">
-        <div class="col-header">
-          <a href="#weapon/${encodeURIComponent(v.family + ':' + v.variantType)}" class="col-weapon-name">${v.name}</a>
+        <div class="col-header" style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;">
+            <a href="#weapon/${encodeURIComponent(v.family + ':' + v.variantType)}" class="col-weapon-name" style="white-space: nowrap;">${v.name}</a>
+            ${v.image ? `<img src="${v.image}" alt="${esc(v.name)}" style="height: 18px; width: auto; max-width: 45px; object-fit: contain; filter: drop-shadow(0 0 1px rgba(255,255,255,0.6)); flex-shrink: 0;">` : ''}
+          </div>
           <div class="col-badges">
             <span class="variant-tag ${isBase ? 'base' : 'branch'}">${vtag}</span>
-            ${renderAmmoTag(v.ammo, true)}
+            ${renderAmmoTag(v.ammo)}
           </div>
         </div>
       </th>`;
@@ -1551,11 +1554,14 @@ function renderComparePage() {
     const ammoLbl = AMMO_LABELS[w.ammo] ?? w.ammo;
     return `
       <th>
-        <div class="compare-header-cell">
-          <a href="#weapon/${encodeURIComponent(w.family + ':' + w.variantType)}" class="compare-weapon-name">${w.name}</a>
+        <div class="compare-header-cell" style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;">
+            <a href="#weapon/${encodeURIComponent(w.family + ':' + w.variantType)}" class="compare-weapon-name" style="white-space: nowrap;">${w.name}</a>
+            ${w.image ? `<img src="${w.image}" alt="${esc(w.name)}" style="height: 18px; width: auto; max-width: 45px; object-fit: contain; filter: drop-shadow(0 0 1px rgba(255,255,255,0.6)); flex-shrink: 0;">` : ''}
+          </div>
           <div style="margin-top: 4px; display: flex; gap: 6px; justify-content: center; align-items: center;">
-            <span class="tier-badge ${tc(w.tier)}" style="font-size: 8px; padding: 1px 4px;">${tl(w.tier)}</span>
-            ${renderAmmoTag(w.ammo, true)}
+            <span class="tier-badge ${tc(w.tier)}" style="display: inline-flex; align-items: center; justify-content: center; width: 24px !important; height: 24px !important; padding: 0 !important; border-radius: 0 !important; font-size: 10px; font-family: 'Rajdhani', sans-serif; font-weight: 700; box-sizing: border-box !important;">${tl(w.tier)}</span>
+            ${renderAmmoTag(w.ammo)}
           </div>
           <button class="compare-remove-header-btn" data-wkey="${esc(w.family)}:${w.variantType}">Убрать</button>
         </div>
